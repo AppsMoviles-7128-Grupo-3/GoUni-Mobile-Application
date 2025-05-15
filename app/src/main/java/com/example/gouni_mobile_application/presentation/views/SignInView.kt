@@ -45,6 +45,7 @@ fun SignInView(viewModel: SignInViewModel = viewModel(), navController: NavContr
 
     if (isLoggedIn) {
         Text("¡Sesión iniciada con éxito!")
+        PlanView()
         return
     }
 
@@ -102,6 +103,7 @@ fun SignInView(viewModel: SignInViewModel = viewModel(), navController: NavContr
 
         Button(
             onClick = { viewModel.signIn() },
+            //navController.navigate("plans"),
             enabled = !isLoading && email.isNotBlank() && password.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) {
