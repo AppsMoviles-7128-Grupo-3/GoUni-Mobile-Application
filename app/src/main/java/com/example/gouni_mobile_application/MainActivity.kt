@@ -11,6 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.gouni_mobile_application.presentation.views.SignInView
+import com.example.gouni_mobile_application.presentation.views.SignUpView
 import com.example.gouni_mobile_application.ui.theme.GoUniMobileApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,30 +23,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            GoUniMobileApplicationTheme {
+            /*GoUniMobileApplicationTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
-            }
+            }*/
+            MyApp()
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GoUniMobileApplicationTheme {
-        Greeting("Android")
+    @Composable
+    fun MyApp() {
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = "signin") {
+            composable("signin") {
+                SignInView(navController = navController)
+            }
+            composable("signup") {
+                SignUpView()
+            }
+        }
     }
 }
