@@ -105,7 +105,7 @@ fun SignUpView(viewModel: SignUpViewModel = viewModel()) {
         Button(
             onClick = { viewModel.register() },
             modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading && name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && termsAccepted
+            enabled = !isLoading && name.isNotBlank() && email.isNotBlank() && password.isNotBlank()
         ) {
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
