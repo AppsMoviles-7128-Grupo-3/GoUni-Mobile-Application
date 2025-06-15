@@ -31,11 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.gouni_mobile_application.R
 
-@Preview(showBackground = true)
 @Composable
-fun SignUpView(viewModel: SignUpViewModel = viewModel()) {
+fun SignUpView(
+    navController: NavController? = null,
+    viewModel: SignUpViewModel = viewModel()
+) {
     val name by viewModel.userName.collectAsState()
     val email by viewModel.email.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -77,6 +80,7 @@ fun SignUpView(viewModel: SignUpViewModel = viewModel()) {
             Modifier.fillMaxWidth(),
             label = { Text("Correo") }
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(
@@ -92,7 +96,6 @@ fun SignUpView(viewModel: SignUpViewModel = viewModel()) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            var termsAccepted = false
             Checkbox(
                 checked = termsAccepted,
                 onCheckedChange = { termsAccepted = it }
@@ -115,18 +118,25 @@ fun SignUpView(viewModel: SignUpViewModel = viewModel()) {
         }
 
         Button(
-            onClick = {  },
+            onClick = {
+                navController?.navigate("signin") {
+                    popUpTo("signup") { inclusive = true }
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-            } else {
-                Text("Iniciar Sesión")
-            }
+            Text("Iniciar Sesión")
         }
 
         if (isRegistered) {
             Text("¡Registro exitoso!", color = Color.Green)
         }
     }
+}
+
+// Preview function
+@Preview(showBackground = true)
+@Composable
+fun SignUpViewPreview() {
+    SignUpView()
 }

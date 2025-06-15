@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 import com.example.gouni_mobile_application.R
 import com.example.gouni_mobile_application.presentation.viewmodels.SignInViewModel
 
-//@Preview(showBackground = true)
+
 @Composable
 fun SignInView(viewModel: SignInViewModel = viewModel(), navController: NavController,) {
     val email by viewModel.email.collectAsState()
@@ -43,7 +43,7 @@ fun SignInView(viewModel: SignInViewModel = viewModel(), navController: NavContr
 
     LaunchedEffect(isLoggedIn) {
         if (isLoggedIn) {
-            navController.navigate("createRoute") {
+            navController.navigate("myRoutes") {
                 popUpTo("signin") { inclusive = true }
             }
         }

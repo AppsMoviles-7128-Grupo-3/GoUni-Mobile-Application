@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gouni_mobile_application.presentation.views.CreateRouteView
+import com.example.gouni_mobile_application.presentation.views.MyRoutesView
 import com.example.gouni_mobile_application.presentation.views.SignInView
 import com.example.gouni_mobile_application.presentation.views.SignUpView
 import com.example.gouni_mobile_application.ui.theme.GoUniMobileApplicationTheme
@@ -32,24 +33,19 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun MyApp() {
         val navController = rememberNavController()
-        /*NavHost(navController = navController, startDestination = "signin") {
-            composable("signin") {
-                SignInView(navController = navController)
-            }
-            composable("signup") {
-                SignUpView()
-            }
-        }*/
 
         NavHost(navController = navController, startDestination = "signin") {
             composable("signin") {
                 SignInView(navController = navController)
             }
             composable("createRoute") {
-                CreateRouteView()
+                CreateRouteView(navController = navController)
+            }
+            composable("myRoutes") {
+                MyRoutesView(navController = navController)
             }
             composable("signup") {
-                SignUpView()
+                SignUpView(navController = navController)
             }
         }
     }

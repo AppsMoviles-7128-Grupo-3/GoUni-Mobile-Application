@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,13 +29,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.gouni_mobile_application.presentation.viewmodels.CreateRouteViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.time.DayOfWeek
 
-@Preview(showBackground = true)
 @Composable
-fun CreateRouteView(viewModel: CreateRouteViewModel = viewModel()) {
+fun CreateRouteView(
+    navController: NavController? = null,
+    viewModel: CreateRouteViewModel = viewModel()
+) {
     val start = viewModel.start
     val end = viewModel.end
     val selectedDays = viewModel.selectedDays
@@ -65,6 +69,19 @@ fun CreateRouteView(viewModel: CreateRouteViewModel = viewModel()) {
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Header con botón de regreso
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextButton(
+                onClick = { navController?.navigateUp() }
+            ) {
+                Text("← Atrás", color = PrimaryColor)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+        }
+
         Text(
             "Crear Nueva Ruta",
             fontSize = 24.sp,
@@ -171,7 +188,11 @@ fun CreateRouteView(viewModel: CreateRouteViewModel = viewModel()) {
         Spacer(modifier = Modifier.height(28.dp))
 
         Button(
-            onClick = { viewModel.confirmRoute() },
+            onClick = {
+                viewModel.confirmRoute()
+                // Opcional: navegar de regreso después de crear la ruta
+                // navController?.navigateUp()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),
@@ -196,4 +217,11 @@ fun CreateRouteView(viewModel: CreateRouteViewModel = viewModel()) {
             )
         }
     }
+}
+
+// Preview function
+@Preview(showBackground = true)
+@Composable
+fun CreateRouteViewPreview() {
+    CreateRouteView()
 }
