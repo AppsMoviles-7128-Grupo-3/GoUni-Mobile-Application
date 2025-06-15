@@ -41,13 +41,15 @@ fun SignInView(viewModel: SignInViewModel = viewModel(), navController: NavContr
     val errorMessage by viewModel.errorMessage.collectAsState()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()
 
-    var passwordVisible by remember { mutableStateOf(false) }
-
-    if (isLoggedIn) {
-        Text("¡Sesión iniciada con éxito!")
-        PlanView()
-        return
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            navController.navigate("createRoute") {
+                popUpTo("signin") { inclusive = true }
+            }
+        }
     }
+
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier

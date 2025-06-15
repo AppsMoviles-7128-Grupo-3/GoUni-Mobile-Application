@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.ads.mobile.sdk)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
