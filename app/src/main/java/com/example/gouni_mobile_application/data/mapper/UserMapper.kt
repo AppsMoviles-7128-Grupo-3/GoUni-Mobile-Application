@@ -7,7 +7,8 @@ fun UserEntity.toDomain(): User = User(
     id = id,
     name = name,
     email = email,
-    university = university
+    university = university,
+    userCode = userCode
 )
 
 fun User.toEntity(password: String): UserEntity = UserEntity(
@@ -15,5 +16,6 @@ fun User.toEntity(password: String): UserEntity = UserEntity(
     name = name,
     email = email,
     password = password,
-    university = university
+    university = university,
+    userCode = userCode
 )

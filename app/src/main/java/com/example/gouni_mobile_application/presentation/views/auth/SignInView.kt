@@ -44,7 +44,7 @@ fun SignInScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Mostrar credenciales de prueba
+        // prueba
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(

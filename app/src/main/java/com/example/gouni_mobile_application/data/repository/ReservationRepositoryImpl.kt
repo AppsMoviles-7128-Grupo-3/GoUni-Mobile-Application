@@ -25,28 +25,28 @@ class ReservationRepositoryImpl : ReservationRepository {
             StudentReservation(
                 id = "1",
                 routeId = "route1",
-                studentName = "Ana García",
+                studentName = "Jinx",
                 age = 20,
-                meetingPlace = "Plaza San Martín",
+                meetingPlace = "UTP",
                 universityId = "U20201234",
                 status = ReservationStatus.PENDING
             ),
             StudentReservation(
                 id = "2",
                 routeId = "route1",
-                studentName = "Carlos López",
+                studentName = "Vi",
                 age = 22,
-                meetingPlace = "Estación Central",
-                universityId = "U20195678",
+                meetingPlace = "UPC Sede San Isidro",
+                universityId = "U20201234",
                 status = ReservationStatus.ACCEPTED
             ),
             StudentReservation(
                 id = "3",
                 routeId = "route2",
-                studentName = "María Rodríguez",
+                studentName = "Ekko",
                 age = 19,
-                meetingPlace = "Centro Comercial",
-                universityId = "U20212345",
+                meetingPlace = "UPC Sede Monterrico",
+                universityId = "U20201234",
                 status = ReservationStatus.PENDING
             )
         )

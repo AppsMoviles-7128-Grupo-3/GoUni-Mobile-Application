@@ -9,5 +9,6 @@ data class UserEntity(
     val name: String,
     val email: String,
     val password: String,
-    val university: String
+    val university: String,
+    val userCode: String // Nuevo campo
 )

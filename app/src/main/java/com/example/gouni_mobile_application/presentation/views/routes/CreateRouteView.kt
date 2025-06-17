@@ -29,7 +29,6 @@ fun CreateRouteScreen(
 
     val createRouteState by viewModel.createRouteState.collectAsState()
 
-    // Limpiar formulario cuando se crea exitosamente
     LaunchedEffect(createRouteState) {
         if (createRouteState is UiState.Success) {
             start = ""
@@ -39,7 +38,7 @@ fun CreateRouteScreen(
             arrivalTime = ""
             availableSeats = ""
             price = ""
-            // Resetear estado después de un delay
+            // delay
             kotlinx.coroutines.delay(2000)
             viewModel.resetCreateRouteState()
         }

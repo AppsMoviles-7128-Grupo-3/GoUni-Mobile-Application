@@ -1,6 +1,8 @@
 package com.example.gouni_mobile_application.presentation.views.auth
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -11,7 +13,7 @@ import com.example.gouni_mobile_application.presentation.state.UiState
 import com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel
 
 @Composable
-fun SignUpScreen(
+fun SignUpView(
     viewModel: AuthViewModel,
     onSignUpSuccess: (String) -> Unit,
     onNavigateToSignIn: () -> Unit
@@ -20,6 +22,7 @@ fun SignUpScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var university by remember { mutableStateOf("") }
+    var userCode by remember { mutableStateOf("") }
 
     val authState by viewModel.authState.collectAsState()
 
@@ -35,7 +38,8 @@ fun SignUpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -49,7 +53,8 @@ fun SignUpScreen(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Nombre") },
+            label = { Text("Nombre Completo") },
+            placeholder = { Text("Juan Pérez") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -59,6 +64,7 @@ fun SignUpScreen(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
+            placeholder = { Text("juan@example.com") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -67,7 +73,7 @@ fun SignUpScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text("Contraseña") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
@@ -78,13 +84,24 @@ fun SignUpScreen(
             value = university,
             onValueChange = { university = it },
             label = { Text("Universidad") },
+            placeholder = { Text("Universidad Nacional") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = userCode,
+            onValueChange = { userCode = it },
+            label = { Text("Código de Usuario") },
+            placeholder = { Text("U20201234") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
-            onClick = { viewModel.register(name, email, password, university) },
+            onClick = { viewModel.register(name, email, password, university, userCode) },
             modifier = Modifier.fillMaxWidth(),
             enabled = authState !is UiState.Loading
         ) {
@@ -104,10 +121,17 @@ fun SignUpScreen(
         when (val currentState = authState) {
             is UiState.Error -> {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = currentState.message,
-                    color = MaterialTheme.colorScheme.error
-                )
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
+                ) {
+                    Text(
+                        text = currentState.message,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
             else -> {}
         }

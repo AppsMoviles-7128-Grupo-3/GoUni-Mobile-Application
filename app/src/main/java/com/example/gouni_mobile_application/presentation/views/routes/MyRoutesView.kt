@@ -1,10 +1,10 @@
 package com.example.gouni_mobile_application.presentation.views.routes
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,14 +16,23 @@ import com.example.gouni_mobile_application.presentation.viewmodel.RoutesViewMod
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun MyRoutesScreen(
+fun MyRoutesView(
     userId: String,
     viewModel: RoutesViewModel
 ) {
     val routesState by viewModel.routesState.collectAsState()
+    val deleteState by viewModel.deleteRouteState.collectAsState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    var routeToDelete by remember { mutableStateOf<Route?>(null) }
 
     LaunchedEffect(userId) {
         viewModel.loadRoutes(userId)
+    }
+
+    LaunchedEffect(deleteState) {
+        if (deleteState is UiState.Success) {
+            viewModel.resetDeleteRouteState()
+        }
     }
 
     Column(
@@ -72,7 +81,13 @@ fun MyRoutesScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(currentState.data) { route ->
-                            RouteCard(route = route)
+                            RouteCard(
+                                route = route,
+                                onDeleteClick = {
+                                    routeToDelete = route
+                                    showDeleteDialog = true
+                                }
+                            )
                         }
                     }
                 }
@@ -90,11 +105,45 @@ fun MyRoutesScreen(
             }
         }
     }
+
+    // Delete Confirmation Dialog
+    if (showDeleteDialog && routeToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Eliminar Ruta") },
+            text = {
+                Text("¿Estás seguro de que quieres eliminar la ruta de ${routeToDelete!!.start} a ${routeToDelete!!.end}?")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.deleteRoute(routeToDelete!!.id, userId)
+                        showDeleteDialog = false
+                        routeToDelete = null
+                    }
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        routeToDelete = null
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RouteCard(route: Route) {
+fun RouteCard(
+    route: Route,
+    onDeleteClick: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -102,11 +151,27 @@ fun RouteCard(route: Route) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(
-                text = "${route.start} → ${route.end}",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "${route.start} → ${route.end}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.weight(1f)
+                )
+
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete Route",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(

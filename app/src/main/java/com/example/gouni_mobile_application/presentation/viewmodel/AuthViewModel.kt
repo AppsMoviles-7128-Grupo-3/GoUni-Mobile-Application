@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gouni_mobile_application.domain.model.User
 import com.example.gouni_mobile_application.domain.usecase.auth.LoginUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.RegisterUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.UpdateUserUseCase
 import com.example.gouni_mobile_application.presentation.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,15 +14,19 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val updateUserUseCase: UpdateUserUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
-    // Cambiar el estado inicial a un estado neutro
     private val _authState = MutableStateFlow<UiState<User>?>(null)
     val authState: StateFlow<UiState<User>?> = _authState
 
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
+
+    private val _updateState = MutableStateFlow<UiState<User>?>(null)
+    val updateState: StateFlow<UiState<User>?> = _updateState
 
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
@@ -45,8 +51,8 @@ class AuthViewModel(
         }
     }
 
-    fun register(name: String, email: String, password: String, university: String) {
-        if (name.isBlank() || email.isBlank() || password.isBlank() || university.isBlank()) {
+    fun register(name: String, email: String, password: String, university: String, userCode: String) {
+        if (name.isBlank() || email.isBlank() || password.isBlank() || university.isBlank() || userCode.isBlank()) {
             _authState.value = UiState.Error("Por favor completa todos los campos")
             return
         }
@@ -54,7 +60,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _authState.value = UiState.Loading
             try {
-                registerUseCase(name, email, password, university)
+                registerUseCase(name, email, password, university, userCode)
                     .onSuccess { user ->
                         _authState.value = UiState.Success(user)
                         _currentUser.value = user
@@ -68,7 +74,37 @@ class AuthViewModel(
         }
     }
 
+    fun updateUser(user: User, password: String) {
+        viewModelScope.launch {
+            _updateState.value = UiState.Loading
+            try {
+                updateUserUseCase(user, password)
+                    .onSuccess { updatedUser ->
+                        _updateState.value = UiState.Success(updatedUser)
+                        _currentUser.value = updatedUser
+                    }
+                    .onFailure { error ->
+                        _updateState.value = UiState.Error(error.message ?: "Error al actualizar")
+                    }
+            } catch (e: Exception) {
+                _updateState.value = UiState.Error("Error inesperado: ${e.message}")
+            }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase()
+            _currentUser.value = null
+            _authState.value = null
+        }
+    }
+
     fun resetAuthState() {
         _authState.value = null
+    }
+
+    fun resetUpdateState() {
+        _updateState.value = null
     }
 }

@@ -8,11 +8,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.platform.LocalContext
 import com.example.gouni_mobile_application.GoUniApplication
 import com.example.gouni_mobile_application.domain.usecase.auth.LoginUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.RegisterUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.UpdateUserUseCase
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.auth.SignInScreen
-import com.example.gouni_mobile_application.presentation.views.auth.SignUpScreen
-import com.example.gouni_mobile_application.presentation.views.main.MainScreen
+import com.example.gouni_mobile_application.presentation.views.auth.SignUpView
+import com.example.gouni_mobile_application.presentation.views.main.MainView
 
 @Composable
 fun AppNavigation() {
@@ -25,8 +27,11 @@ fun AppNavigation() {
     val authViewModelFactory = ViewModelFactory(
         loginUseCase = LoginUseCase(application.authRepository),
         registerUseCase = RegisterUseCase(application.authRepository),
+        updateUserUseCase = UpdateUserUseCase(application.authRepository),
+        logoutUseCase = LogoutUseCase(application.authRepository),
         getMyRoutesUseCase = com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase(application.routeRepository),
         createRouteUseCase = com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase(application.routeRepository),
+        deleteRouteUseCase = com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase(application.routeRepository),
         getReservationsUseCase = com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsUseCase(application.reservationRepository)
     )
 
@@ -50,7 +55,7 @@ fun AppNavigation() {
         }
 
         composable("signup") {
-            SignUpScreen(
+            SignUpView(
                 viewModel = viewModel(factory = authViewModelFactory),
                 onSignUpSuccess = { userId ->
                     currentUserId = userId
@@ -66,10 +71,16 @@ fun AppNavigation() {
 
         composable("main") {
             val mainNavController = rememberNavController()
-            MainScreen(
+            MainView(
                 navController = mainNavController,
                 userId = currentUserId ?: "",
-                application = application
+                application = application,
+                onLogout = {
+                    currentUserId = null
+                    navController.navigate("signin") {
+                        popUpTo("main") { inclusive = true }
+                    }
+                }
             )
         }
     }

@@ -15,46 +15,46 @@ class AuthRepositoryImpl(
 
     override suspend fun login(email: String, password: String): Result<User> {
         return try {
-            println("Intentando login con email: $email, password: $password")
             val userEntity = userDao.getUserByCredentials(email, password)
-            println("Usuario encontrado: $userEntity")
-
             if (userEntity != null) {
                 currentUser = userEntity.toDomain()
-                println("Login exitoso para usuario: ${currentUser?.name}")
                 Result.success(currentUser!!)
             } else {
-                println("Credenciales inválidas")
                 Result.failure(Exception("Credenciales inválidas"))
             }
         } catch (e: Exception) {
-            println("Error en login: ${e.message}")
             Result.failure(e)
         }
     }
 
-    override suspend fun register(name: String, email: String, password: String, university: String): Result<User> {
+    override suspend fun register(name: String, email: String, password: String, university: String, userCode: String): Result<User> {
         return try {
-            println("Intentando registro con email: $email")
             val existingUser = userDao.getUserByEmail(email)
-
             if (existingUser != null) {
-                println("Usuario ya existe")
                 Result.failure(Exception("El usuario ya existe"))
             } else {
                 val user = User(
                     id = UUID.randomUUID().toString(),
                     name = name,
                     email = email,
-                    university = university
+                    university = university,
+                    userCode = userCode
                 )
                 userDao.insertUser(user.toEntity(password))
                 currentUser = user
-                println("Registro exitoso para usuario: ${user.name}")
                 Result.success(user)
             }
         } catch (e: Exception) {
-            println("Error en registro: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateUser(user: User, password: String): Result<User> {
+        return try {
+            userDao.updateUser(user.toEntity(password))
+            currentUser = user
+            Result.success(user)
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }

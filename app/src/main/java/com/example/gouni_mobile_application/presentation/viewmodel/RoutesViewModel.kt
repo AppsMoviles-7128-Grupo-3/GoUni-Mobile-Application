@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gouni_mobile_application.domain.model.Route
 import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
 import com.example.gouni_mobile_application.presentation.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,15 +15,18 @@ import java.time.LocalTime
 
 class RoutesViewModel(
     private val getMyRoutesUseCase: GetMyRoutesUseCase,
-    private val createRouteUseCase: CreateRouteUseCase
+    private val createRouteUseCase: CreateRouteUseCase,
+    private val deleteRouteUseCase: DeleteRouteUseCase
 ) : ViewModel() {
 
     private val _routesState = MutableStateFlow<UiState<List<Route>>>(UiState.Success(emptyList()))
     val routesState: StateFlow<UiState<List<Route>>> = _routesState
 
-    // Cambiar estado inicial a null para evitar loading permanente
     private val _createRouteState = MutableStateFlow<UiState<String>?>(null)
     val createRouteState: StateFlow<UiState<String>?> = _createRouteState
+
+    private val _deleteRouteState = MutableStateFlow<UiState<Unit>?>(null)
+    val deleteRouteState: StateFlow<UiState<Unit>?> = _deleteRouteState
 
     fun loadRoutes(driverId: String) {
         viewModelScope.launch {
@@ -62,7 +66,6 @@ class RoutesViewModel(
                 createRouteUseCase(route)
                     .onSuccess { routeId ->
                         _createRouteState.value = UiState.Success(routeId)
-                        // Recargar las rutas después de crear una nueva
                         loadRoutes(driverId)
                     }
                     .onFailure { error ->
@@ -74,7 +77,29 @@ class RoutesViewModel(
         }
     }
 
+    fun deleteRoute(routeId: String, driverId: String) {
+        viewModelScope.launch {
+            _deleteRouteState.value = UiState.Loading
+            try {
+                deleteRouteUseCase(routeId)
+                    .onSuccess {
+                        _deleteRouteState.value = UiState.Success(Unit)
+                        loadRoutes(driverId)
+                    }
+                    .onFailure { error ->
+                        _deleteRouteState.value = UiState.Error(error.message ?: "Failed to delete route")
+                    }
+            } catch (e: Exception) {
+                _deleteRouteState.value = UiState.Error("Error inesperado: ${e.message}")
+            }
+        }
+    }
+
     fun resetCreateRouteState() {
         _createRouteState.value = null
+    }
+
+    fun resetDeleteRouteState() {
+        _deleteRouteState.value = null
     }
 }

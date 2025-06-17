@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -21,7 +22,7 @@ fun BottomNavigation(navController: NavController) {
     NavigationBar {
         NavigationBarItem(
             icon = { Icon(Icons.Default.Add, contentDescription = "Create Route") },
-            label = { Text("Create") },
+            label = { Text("Crear") },
             selected = currentRoute == "create_route",
             onClick = {
                 navController.navigate("create_route") {
@@ -32,7 +33,7 @@ fun BottomNavigation(navController: NavController) {
 
         NavigationBarItem(
             icon = { Icon(Icons.Default.List, contentDescription = "My Routes") },
-            label = { Text("Routes") },
+            label = { Text("Rutas") },
             selected = currentRoute == "my_routes",
             onClick = {
                 navController.navigate("my_routes") {
@@ -43,11 +44,22 @@ fun BottomNavigation(navController: NavController) {
 
         NavigationBarItem(
             icon = { Icon(Icons.Default.People, contentDescription = "Reservations") },
-            label = { Text("Reservations") },
+            label = { Text("Reservas") },
             selected = currentRoute == "reservations",
             onClick = {
                 navController.navigate("reservations") {
                     popUpTo("reservations") { inclusive = true }
+                }
+            }
+        )
+
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
+            label = { Text("Perfil") },
+            selected = currentRoute == "profile",
+            onClick = {
+                navController.navigate("profile") {
+                    popUpTo("profile") { inclusive = true }
                 }
             }
         )

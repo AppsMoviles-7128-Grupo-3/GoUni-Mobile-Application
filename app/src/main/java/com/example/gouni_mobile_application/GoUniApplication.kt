@@ -3,6 +3,7 @@ package com.example.gouni_mobile_application
 import android.app.Application
 import androidx.room.Room
 import com.example.gouni_mobile_application.data.local.database.AppDatabase
+import com.example.gouni_mobile_application.data.local.database.MIGRATION_1_2
 import com.example.gouni_mobile_application.data.local.entity.UserEntity
 import com.example.gouni_mobile_application.data.repository.AuthRepositoryImpl
 import com.example.gouni_mobile_application.data.repository.ReservationRepositoryImpl
@@ -21,7 +22,7 @@ class GoUniApplication : Application() {
             applicationContext,
             AppDatabase::class.java,
             "gouni_database"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
     }
 
     val authRepository: AuthRepository by lazy {
@@ -38,21 +39,20 @@ class GoUniApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        // Insertar datos de prueba siempre
         insertTestData()
     }
 
     private fun insertTestData() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Insertar usuarios de prueba directamente
                 database.userDao().insertUser(
                     UserEntity(
                         id = "user1",
                         name = "Juan Pérez",
                         email = "test@example.com",
                         password = "123456",
-                        university = "Universidad Nacional"
+                        university = "Universidad Nacional",
+                        userCode = "U20201234"
                     )
                 )
 
@@ -62,7 +62,8 @@ class GoUniApplication : Application() {
                         name = "María García",
                         email = "maria@example.com",
                         password = "password",
-                        university = "Universidad Central"
+                        university = "Universidad Central",
+                        userCode = "U20195678"
                     )
                 )
 
