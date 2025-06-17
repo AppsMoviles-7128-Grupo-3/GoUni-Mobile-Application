@@ -158,7 +158,7 @@ fun ProfileView(
                 }
             }
         } else {
-            // View Mode
+            // view mode
             ProfileInfoCard(
                 title = "Información Personal",
                 items = listOf(
