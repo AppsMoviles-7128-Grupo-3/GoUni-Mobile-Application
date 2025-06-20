@@ -210,7 +210,7 @@ fun RouteCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "Precio: $${route.price.toInt()}",
+                    text = "Precio: S/.${route.price.toInt()}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
