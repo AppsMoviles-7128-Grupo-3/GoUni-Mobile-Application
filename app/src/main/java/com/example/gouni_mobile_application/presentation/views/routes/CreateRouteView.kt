@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -78,7 +80,7 @@ fun CreateRouteScreen(
                         )
                     ) {
                         Column(
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(8.dp)
                         ) {
                             Text(
                                 text = "Vehículo Registrado",
@@ -93,7 +95,7 @@ fun CreateRouteScreen(
                         }
                     }
                     
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = start,
@@ -102,7 +104,7 @@ fun CreateRouteScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     OutlinedTextField(
                         value = end,
@@ -127,30 +129,47 @@ fun CreateRouteScreen(
                     )
 
                     daysOfWeek.forEach { (day, displayName) ->
-                        Row(
+                        val isSelected = selectedDays.contains(day)
+
+                        Card(
+                            onClick = {
+                                selectedDays = if (isSelected) selectedDays - day else selectedDays + day
+                            },
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isSelected)
+                                    MaterialTheme.colorScheme.primaryContainer
+                                else
+                                    MaterialTheme.colorScheme.surfaceVariant
+                            ),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                            shape = MaterialTheme.shapes.medium,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .toggleable(
-                                    value = selectedDays.contains(day),
-                                    onValueChange = { isSelected ->
-                                        selectedDays = if (isSelected) {
-                                            selectedDays + day
-                                        } else {
-                                            selectedDays - day
-                                        }
-                                    }
-                                )
-                                .padding(vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(vertical = 4.dp)
+                                .height(40.dp)
                         ) {
-                            Checkbox(
-                                checked = selectedDays.contains(day),
-                                onCheckedChange = null
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(displayName)
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = displayName,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
                         }
                     }
+
 
                     Spacer(modifier = Modifier.height(16.dp))
 

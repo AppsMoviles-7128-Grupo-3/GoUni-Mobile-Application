@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -72,14 +74,24 @@ fun MainView(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("GoUni Driver") },
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        "GoUni Driver",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Medium
+                        )
+                    )
+                },
                 actions = {
                     IconButton(onClick = {
                         authViewModel.logout()
                         onLogout()
                     }) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Logout")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Logout"
+                        )
                     }
                 }
             )
@@ -161,11 +173,11 @@ fun MainView(
             composable("car_edit") {
                 val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
                 val carState by carViewModel.carState.collectAsState()
-                
+
                 LaunchedEffect(userId) {
                     carViewModel.getCar(userId)
                 }
-                
+
                 when (val currentCarState = carState) {
                     is UiState.Success -> {
                         currentCarState.data?.let { car ->

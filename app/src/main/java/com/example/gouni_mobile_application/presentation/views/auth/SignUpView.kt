@@ -1,5 +1,6 @@
 package com.example.gouni_mobile_application.presentation.views.auth
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -7,8 +8,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.gouni_mobile_application.R
 import com.example.gouni_mobile_application.presentation.state.UiState
 import com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel
 
@@ -38,17 +42,27 @@ fun SignUpView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 24.dp, vertical = 16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = "Crear Cuenta",
-            style = MaterialTheme.typography.headlineMedium
+        Image(
+            painter = painterResource(id = R.drawable.gounislogan),
+            contentDescription = "GoUni Logo",
+            modifier = Modifier.size(80.dp)
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Crear Cuenta",
+            style = MaterialTheme.typography.headlineLarge.copy(
+                fontWeight = FontWeight.Light
+            )
+        )
+
+        Spacer(modifier = Modifier.height(48.dp))
 
         OutlinedTextField(
             value = name,
@@ -57,7 +71,7 @@ fun SignUpView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = email,
@@ -67,7 +81,7 @@ fun SignUpView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = password,
@@ -77,7 +91,7 @@ fun SignUpView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = university,
@@ -86,7 +100,7 @@ fun SignUpView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         OutlinedTextField(
             value = userCode,
@@ -95,21 +109,31 @@ fun SignUpView(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         Button(
             onClick = { viewModel.register(name, email, password, university, userCode) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
             enabled = authState !is UiState.Loading
         ) {
             if (authState is UiState.Loading) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             } else {
-                Text("Registrarse")
+                Text(
+                    "Registrarse",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        fontWeight = FontWeight.Medium
+                    )
+                )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         TextButton(onClick = onNavigateToSignIn) {
             Text("¿Ya tienes cuenta? Inicia Sesión")
@@ -118,19 +142,16 @@ fun SignUpView(
         when (val currentState = authState) {
             is UiState.Error -> {
                 Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.errorContainer
-                    )
-                ) {
-                    Text(
-                        text = currentState.message,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                Text(
+                    text = currentState.message,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
             }
             else -> {}
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
