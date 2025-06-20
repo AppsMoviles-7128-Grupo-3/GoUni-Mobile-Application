@@ -23,4 +23,7 @@ interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
     suspend fun getUserById(id: String): UserEntity?
+
+    @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
+    fun getUserByIdFlow(id: String): kotlinx.coroutines.flow.Flow<UserEntity?>
 }
