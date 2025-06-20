@@ -47,6 +47,14 @@ fun MyRoutesView(
         )
 
         when (val currentState = routesState) {
+            is UiState.Idle -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Cargando rutas...")
+                }
+            }
             is UiState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -106,7 +114,6 @@ fun MyRoutesView(
         }
     }
 
-    // Delete Confirmation Dialog
     if (showDeleteDialog && routeToDelete != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },

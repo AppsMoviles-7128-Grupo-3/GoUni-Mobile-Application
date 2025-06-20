@@ -1,6 +1,7 @@
 package com.example.gouni_mobile_application.domain.repository
 
 import com.example.gouni_mobile_application.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
     suspend fun login(email: String, password: String): Result<User>
@@ -8,4 +9,6 @@ interface AuthRepository {
     suspend fun getCurrentUser(): User?
     suspend fun updateUser(user: User, password: String): Result<User>
     suspend fun logout()
+    suspend fun getUserById(userId: String): User?
+    fun getUserByIdFlow(userId: String): Flow<User?>
 }

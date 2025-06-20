@@ -11,6 +11,7 @@ import java.time.LocalTime
 fun RouteEntity.toDomain(): Route = Route(
     id = id,
     driverId = driverId,
+    carId = carId,
     start = start,
     end = end,
     days = days.split(",").map { DayOfWeek.valueOf(it) },
@@ -23,6 +24,7 @@ fun RouteEntity.toDomain(): Route = Route(
 fun Route.toEntity(): RouteEntity = RouteEntity(
     id = if (id.isEmpty()) java.util.UUID.randomUUID().toString() else id,
     driverId = driverId,
+    carId = carId,
     start = start,
     end = end,
     days = days.joinToString(",") { it.name },

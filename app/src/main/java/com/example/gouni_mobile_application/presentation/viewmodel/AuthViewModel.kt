@@ -3,6 +3,7 @@ package com.example.gouni_mobile_application.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gouni_mobile_application.domain.model.User
+import com.example.gouni_mobile_application.domain.usecase.auth.GetUserByIdUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.LoginUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.RegisterUseCase
@@ -11,12 +12,14 @@ import com.example.gouni_mobile_application.presentation.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.asStateFlow
 
 class AuthViewModel(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val getUserByIdUseCase: GetUserByIdUseCase
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<UiState<User>?>(null)
@@ -25,8 +28,16 @@ class AuthViewModel(
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
-    private val _updateState = MutableStateFlow<UiState<User>?>(null)
-    val updateState: StateFlow<UiState<User>?> = _updateState
+    private val _updateState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
+    val updateState: StateFlow<UiState<Unit>> = _updateState.asStateFlow()
+
+    fun loadCurrentUser(userId: String) {
+        viewModelScope.launch {
+            getUserByIdUseCase(userId).collect { user ->
+                _currentUser.value = user
+            }
+        }
+    }
 
     fun login(email: String, password: String) {
         if (email.isBlank() || password.isBlank()) {
@@ -79,9 +90,9 @@ class AuthViewModel(
             _updateState.value = UiState.Loading
             try {
                 updateUserUseCase(user, password)
-                    .onSuccess { updatedUser ->
-                        _updateState.value = UiState.Success(updatedUser)
-                        _currentUser.value = updatedUser
+                    .onSuccess {
+                        _updateState.value = UiState.Success(Unit)
+                        loadCurrentUser(user.id)
                     }
                     .onFailure { error ->
                         _updateState.value = UiState.Error(error.message ?: "Error al actualizar")
@@ -105,6 +116,6 @@ class AuthViewModel(
     }
 
     fun resetUpdateState() {
-        _updateState.value = null
+        _updateState.value = UiState.Idle
     }
 }

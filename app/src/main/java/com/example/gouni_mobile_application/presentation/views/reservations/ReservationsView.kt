@@ -37,6 +37,14 @@ fun ReservationsScreen(
         )
 
         when (val currentState = reservationsState) {
+            is UiState.Idle -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Cargando reservaciones...")
+                }
+            }
             is UiState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),

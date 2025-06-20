@@ -4,11 +4,15 @@ import android.app.Application
 import androidx.room.Room
 import com.example.gouni_mobile_application.data.local.database.AppDatabase
 import com.example.gouni_mobile_application.data.local.database.MIGRATION_1_2
+import com.example.gouni_mobile_application.data.local.database.MIGRATION_2_3
+import com.example.gouni_mobile_application.data.local.database.MIGRATION_3_4
 import com.example.gouni_mobile_application.data.local.entity.UserEntity
 import com.example.gouni_mobile_application.data.repository.AuthRepositoryImpl
+import com.example.gouni_mobile_application.data.repository.CarRepositoryImpl
 import com.example.gouni_mobile_application.data.repository.ReservationRepositoryImpl
 import com.example.gouni_mobile_application.data.repository.RouteRepositoryImpl
 import com.example.gouni_mobile_application.domain.repository.AuthRepository
+import com.example.gouni_mobile_application.domain.repository.CarRepository
 import com.example.gouni_mobile_application.domain.repository.ReservationRepository
 import com.example.gouni_mobile_application.domain.repository.RouteRepository
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +26,7 @@ class GoUniApplication : Application() {
             applicationContext,
             AppDatabase::class.java,
             "gouni_database"
-        ).addMigrations(MIGRATION_1_2).build()
+        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build()
     }
 
     val authRepository: AuthRepository by lazy {
@@ -35,6 +39,10 @@ class GoUniApplication : Application() {
 
     val reservationRepository: ReservationRepository by lazy {
         ReservationRepositoryImpl()
+    }
+
+    val carRepository: CarRepository by lazy {
+        CarRepositoryImpl(database.carDao())
     }
 
     override fun onCreate() {
@@ -51,7 +59,7 @@ class GoUniApplication : Application() {
                         name = "Juan Pérez",
                         email = "test@example.com",
                         password = "123456",
-                        university = "Universidad Nacional",
+                        university = "UPC",
                         userCode = "U20201234"
                     )
                 )
@@ -62,7 +70,7 @@ class GoUniApplication : Application() {
                         name = "María García",
                         email = "maria@example.com",
                         password = "password",
-                        university = "Universidad Central",
+                        university = "UPC",
                         userCode = "U20195678"
                     )
                 )

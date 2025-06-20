@@ -11,6 +11,11 @@ import com.example.gouni_mobile_application.domain.usecase.auth.LoginUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.RegisterUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdateUserUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.GetUserByIdUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.auth.SignInScreen
 import com.example.gouni_mobile_application.presentation.views.auth.SignUpView
@@ -32,7 +37,12 @@ fun AppNavigation() {
         getMyRoutesUseCase = com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase(application.routeRepository),
         createRouteUseCase = com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase(application.routeRepository),
         deleteRouteUseCase = com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase(application.routeRepository),
-        getReservationsUseCase = com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsUseCase(application.reservationRepository)
+        getReservationsUseCase = com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsUseCase(application.reservationRepository),
+        getCarUseCase = GetCarUseCase(application.carRepository),
+        insertCarUseCase = InsertCarUseCase(application.carRepository),
+        hasCarUseCase = HasCarUseCase(application.carRepository),
+        deleteCarUseCase = DeleteCarUseCase(application.carRepository),
+        getUserByIdUseCase = GetUserByIdUseCase(application.authRepository)
     )
 
     NavHost(

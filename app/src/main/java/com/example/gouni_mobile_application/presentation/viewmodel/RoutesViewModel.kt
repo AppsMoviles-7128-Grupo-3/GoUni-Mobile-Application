@@ -42,6 +42,7 @@ class RoutesViewModel(
 
     fun createRoute(
         driverId: String,
+        carId: String,
         start: String,
         end: String,
         days: List<DayOfWeek>,
@@ -55,6 +56,7 @@ class RoutesViewModel(
             try {
                 val route = Route(
                     driverId = driverId,
+                    carId = carId,
                     start = start,
                     end = end,
                     days = days,

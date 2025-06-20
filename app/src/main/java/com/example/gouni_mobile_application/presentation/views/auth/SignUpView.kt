@@ -54,7 +54,6 @@ fun SignUpView(
             value = name,
             onValueChange = { name = it },
             label = { Text("Nombre Completo") },
-            placeholder = { Text("Juan Pérez") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -64,7 +63,7 @@ fun SignUpView(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
-            placeholder = { Text("juan@example.com") },
+            placeholder = { Text("example@example.com") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -84,7 +83,6 @@ fun SignUpView(
             value = university,
             onValueChange = { university = it },
             label = { Text("Universidad") },
-            placeholder = { Text("Universidad Nacional") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -94,7 +92,6 @@ fun SignUpView(
             value = userCode,
             onValueChange = { userCode = it },
             label = { Text("Código de Usuario") },
-            placeholder = { Text("U20201234") },
             modifier = Modifier.fillMaxWidth()
         )
 

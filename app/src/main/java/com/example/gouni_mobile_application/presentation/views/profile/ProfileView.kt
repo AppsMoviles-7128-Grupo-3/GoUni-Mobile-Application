@@ -4,21 +4,32 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.gouni_mobile_application.domain.model.User
 import com.example.gouni_mobile_application.presentation.state.UiState
 import com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel
+import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
+import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 
 @Composable
 fun ProfileView(
     user: User,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel,
+    userId: String,
+    viewModelFactory: ViewModelFactory,
+    onNavigateToCarRegistration: () -> Unit,
+    onNavigateToUserEdit: () -> Unit,
+    onNavigateToCarEdit: () -> Unit
 ) {
     var isEditing by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf(user.name) }
@@ -26,8 +37,19 @@ fun ProfileView(
     var university by remember { mutableStateOf(user.university) }
     var userCode by remember { mutableStateOf(user.userCode) }
     var password by remember { mutableStateOf("") }
+    var showEditOptions by remember { mutableStateOf(false) }
 
     val updateState by viewModel.updateState.collectAsState()
+    
+    // Car ViewModel
+    val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
+    val carState by carViewModel.carState.collectAsState()
+    val hasCarState by carViewModel.hasCarState.collectAsState()
+
+    LaunchedEffect(userId) {
+        carViewModel.hasCar(userId)
+        carViewModel.getCar(userId)
+    }
 
     LaunchedEffect(updateState) {
         if (updateState is UiState.Success) {
@@ -52,122 +74,135 @@ fun ProfileView(
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            IconButton(
-                onClick = {
-                    isEditing = !isEditing
-                    if (!isEditing) {
-                        // Reset values if canceling edit
-                        name = user.name
-                        email = user.email
-                        university = user.university
-                        userCode = user.userCode
-                        password = ""
-                    }
+            Box {
+                IconButton(
+                    onClick = { showEditOptions = !showEditOptions }
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit Options")
                 }
-            ) {
-                Icon(Icons.Default.Edit, contentDescription = "Edit Profile")
+
+                DropdownMenu(
+                    expanded = showEditOptions,
+                    onDismissRequest = { showEditOptions = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Editar Información Personal") },
+                        onClick = {
+                            showEditOptions = false
+                            onNavigateToUserEdit()
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Editar Información del Vehículo") },
+                        onClick = {
+                            showEditOptions = false
+                            onNavigateToCarEdit()
+                        }
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (isEditing) {
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Nombre") },
-                modifier = Modifier.fillMaxWidth()
+        ProfileInfoCard(
+            title = "Información Personal",
+            items = listOf(
+                "Nombre" to user.name,
+                "Email" to user.email,
+                "Universidad" to user.university,
+                "Código de Usuario" to user.userCode
             )
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = university,
-                onValueChange = { university = it },
-                label = { Text("Universidad") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = userCode,
-                onValueChange = { userCode = it },
-                label = { Text("Código de Usuario") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Contraseña (dejar vacío para mantener actual)") },
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                OutlinedButton(
-                    onClick = {
-                        isEditing = false
-                        name = user.name
-                        email = user.email
-                        university = user.university
-                        userCode = user.userCode
-                        password = ""
-                    },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Cancelar")
-                }
-
-                Button(
-                    onClick = {
-                        val updatedUser = user.copy(
-                            name = name,
-                            email = email,
-                            university = university,
-                            userCode = userCode
+        when (val currentCarState = carState) {
+            is UiState.Success -> {
+                currentCarState.data?.let { car ->
+                    ProfileInfoCard(
+                        title = "Información del Vehículo",
+                        items = listOf(
+                            "Marca" to car.make,
+                            "Modelo" to car.model,
+                            "Placa" to car.licensePlate,
+                            "Color" to car.color,
+                            "Año" to car.year.toString(),
+                            "Seguro" to car.insuranceInfo,
+                            "Marca de Seguro" to car.insuranceBrand,
+                            "Registro" to car.registrationNumber
                         )
-                        val finalPassword = if (password.isBlank()) "123456" else password // Default password
-                        viewModel.updateUser(updatedUser, finalPassword)
-                    },
-                    modifier = Modifier.weight(1f),
-                    enabled = updateState !is UiState.Loading
-                ) {
-                    if (updateState is UiState.Loading) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                    } else {
-                        Text("Guardar")
+                    )
+                } ?: run {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Información del Vehículo",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = "No hay vehículo registrado",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = onNavigateToCarRegistration,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = null)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Registrar Vehículo")
+                            }
+                        }
                     }
                 }
             }
-        } else {
-            // view mode
-            ProfileInfoCard(
-                title = "Información Personal",
-                items = listOf(
-                    "Nombre" to user.name,
-                    "Email" to user.email,
-                    "Universidad" to user.university,
-                    "Código de Usuario" to user.userCode
-                )
-            )
+            is UiState.Loading -> {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            }
+            is UiState.Error -> {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Error al cargar información del vehículo",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = currentCarState.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            else -> {}
         }
 
         when (val currentState = updateState) {

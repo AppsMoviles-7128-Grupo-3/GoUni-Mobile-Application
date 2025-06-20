@@ -9,15 +9,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gouni_mobile_application.presentation.state.UiState
+import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
 import com.example.gouni_mobile_application.presentation.viewmodel.RoutesViewModel
+import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import java.time.DayOfWeek
 import java.time.LocalTime
 
 @Composable
 fun CreateRouteScreen(
     userId: String,
-    viewModel: RoutesViewModel
+    viewModel: RoutesViewModel,
+    viewModelFactory: ViewModelFactory,
+    onNavigateToCarRegistration: () -> Unit
 ) {
     var start by remember { mutableStateOf("") }
     var end by remember { mutableStateOf("") }
@@ -28,6 +33,13 @@ fun CreateRouteScreen(
     var price by remember { mutableStateOf("") }
 
     val createRouteState by viewModel.createRouteState.collectAsState()
+
+    val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
+    val carState by carViewModel.carState.collectAsState()
+
+    LaunchedEffect(userId) {
+        carViewModel.getCar(userId)
+    }
 
     LaunchedEffect(createRouteState) {
         if (createRouteState is UiState.Success) {
@@ -56,173 +68,264 @@ fun CreateRouteScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        OutlinedTextField(
-            value = start,
-            onValueChange = { start = it },
-            label = { Text("Desde") },
-            placeholder = { Text("Ej: Universidad Central") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        when (val currentCarState = carState) {
+            is UiState.Success -> {
+                currentCarState.data?.let { car ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f)
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Text(
+                                text = "Vehículo Registrado",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "${car.make} ${car.model} - ${car.licensePlate}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = start,
+                        onValueChange = { start = it },
+                        label = { Text("Desde") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-        OutlinedTextField(
-            value = end,
-            onValueChange = { end = it },
-            label = { Text("Hasta") },
-            placeholder = { Text("Ej: Centro Comercial") },
-            modifier = Modifier.fillMaxWidth()
-        )
+                    Spacer(modifier = Modifier.height(16.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = end,
+                        onValueChange = { end = it },
+                        label = { Text("Hasta") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
-        Text("Seleccionar Días:", style = MaterialTheme.typography.titleMedium)
-        Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-        val daysOfWeek = listOf(
-            DayOfWeek.MONDAY to "Lunes",
-            DayOfWeek.TUESDAY to "Martes",
-            DayOfWeek.WEDNESDAY to "Miércoles",
-            DayOfWeek.THURSDAY to "Jueves",
-            DayOfWeek.FRIDAY to "Viernes",
-            DayOfWeek.SATURDAY to "Sábado",
-            DayOfWeek.SUNDAY to "Domingo"
-        )
+                    Text("Seleccionar Días:", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
 
-        daysOfWeek.forEach { (day, displayName) ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .toggleable(
-                        value = selectedDays.contains(day),
-                        onValueChange = { isSelected ->
-                            selectedDays = if (isSelected) {
-                                selectedDays + day
-                            } else {
-                                selectedDays - day
+                    val daysOfWeek = listOf(
+                        DayOfWeek.MONDAY to "Lunes",
+                        DayOfWeek.TUESDAY to "Martes",
+                        DayOfWeek.WEDNESDAY to "Miércoles",
+                        DayOfWeek.THURSDAY to "Jueves",
+                        DayOfWeek.FRIDAY to "Viernes",
+                        DayOfWeek.SATURDAY to "Sábado",
+                        DayOfWeek.SUNDAY to "Domingo"
+                    )
+
+                    daysOfWeek.forEach { (day, displayName) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .toggleable(
+                                    value = selectedDays.contains(day),
+                                    onValueChange = { isSelected ->
+                                        selectedDays = if (isSelected) {
+                                            selectedDays + day
+                                        } else {
+                                            selectedDays - day
+                                        }
+                                    }
+                                )
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Checkbox(
+                                checked = selectedDays.contains(day),
+                                onCheckedChange = null
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(displayName)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = departureTime,
+                            onValueChange = { departureTime = it },
+                            label = { Text("Salida") },
+                            placeholder = { Text("08:00") },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        OutlinedTextField(
+                            value = arrivalTime,
+                            onValueChange = { arrivalTime = it },
+                            label = { Text("Llegada") },
+                            placeholder = { Text("09:00") },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = availableSeats,
+                            onValueChange = { availableSeats = it },
+                            label = { Text("Asientos Disponibles") },
+                            modifier = Modifier.weight(2f)
+                        )
+
+                        OutlinedTextField(
+                            value = price,
+                            onValueChange = { price = it },
+                            label = { Text("Precio") },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        onClick = {
+                            if (validateForm(start, end, selectedDays, departureTime, arrivalTime, availableSeats, price)) {
+                                try {
+                                    viewModel.createRoute(
+                                        driverId = userId,
+                                        carId = car.id,
+                                        start = start,
+                                        end = end,
+                                        days = selectedDays.toList(),
+                                        departureTime = LocalTime.parse(departureTime),
+                                        arrivalTime = LocalTime.parse(arrivalTime),
+                                        availableSeats = availableSeats.toInt(),
+                                        price = price.toDouble()
+                                    )
+                                } catch (e: Exception) { }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = createRouteState !is UiState.Loading
+                    ) {
+                        if (createRouteState is UiState.Loading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text("Crear Ruta")
+                        }
+                    }
+
+                    when (val currentState = createRouteState) {
+                        is UiState.Success -> {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                                )
+                            ) {
+                                Text(
+                                    text = "¡Ruta creada exitosamente!",
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.padding(16.dp)
+                                )
                             }
                         }
-                    )
-                    .padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = selectedDays.contains(day),
-                    onCheckedChange = null
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(displayName)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = departureTime,
-                onValueChange = { departureTime = it },
-                label = { Text("Salida") },
-                placeholder = { Text("08:00") },
-                modifier = Modifier.weight(1f)
-            )
-
-            OutlinedTextField(
-                value = arrivalTime,
-                onValueChange = { arrivalTime = it },
-                label = { Text("Llegada") },
-                placeholder = { Text("09:00") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            OutlinedTextField(
-                value = availableSeats,
-                onValueChange = { availableSeats = it },
-                label = { Text("Asientos") },
-                placeholder = { Text("4") },
-                modifier = Modifier.weight(1f)
-            )
-
-            OutlinedTextField(
-                value = price,
-                onValueChange = { price = it },
-                label = { Text("Precio") },
-                placeholder = { Text("5000") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                if (validateForm(start, end, selectedDays, departureTime, arrivalTime, availableSeats, price)) {
-                    try {
-                        viewModel.createRoute(
-                            driverId = userId,
-                            start = start,
-                            end = end,
-                            days = selectedDays.toList(),
-                            departureTime = LocalTime.parse(departureTime),
-                            arrivalTime = LocalTime.parse(arrivalTime),
-                            availableSeats = availableSeats.toInt(),
-                            price = price.toDouble()
+                        is UiState.Error -> {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer
+                                )
+                            ) {
+                                Text(
+                                    text = currentState.message,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                        else -> {}
+                    }
+                } ?: run {
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.1f)
                         )
-                    } catch (e: Exception) {
-                        // Manejar error de parsing
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Vehículo Requerido",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Debe registrar un vehículo antes de crear rutas",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = {
+                                    // Navigate to car registration
+                                    onNavigateToCarRegistration()
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text("Registrar Vehículo")
+                            }
+                        }
                     }
                 }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = createRouteState !is UiState.Loading
-        ) {
-            if (createRouteState is UiState.Loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            } else {
-                Text("Crear Ruta")
             }
-        }
-
-        // Mostrar mensajes de estado
-        when (val currentState = createRouteState) {
-            is UiState.Success -> {
-                Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
+            is UiState.Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "¡Ruta creada exitosamente!",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    CircularProgressIndicator()
                 }
             }
             is UiState.Error -> {
-                Spacer(modifier = Modifier.height(16.dp))
                 Card(
+                    modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer
                     )
                 ) {
-                    Text(
-                        text = currentState.message,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    Column(
                         modifier = Modifier.padding(16.dp)
-                    )
+                    ) {
+                        Text(
+                            text = "Error al verificar vehículo",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = currentCarState.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
             else -> {}

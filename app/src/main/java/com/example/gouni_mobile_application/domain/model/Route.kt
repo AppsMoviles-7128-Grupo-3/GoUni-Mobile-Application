@@ -6,6 +6,7 @@ import java.time.LocalTime
 data class Route(
     val id: String = "",
     val driverId: String,
+    val carId: String,
     val start: String,
     val end: String,
     val days: List<DayOfWeek>,

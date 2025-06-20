@@ -5,6 +5,8 @@ import com.example.gouni_mobile_application.data.mapper.toDomain
 import com.example.gouni_mobile_application.data.mapper.toEntity
 import com.example.gouni_mobile_application.domain.model.User
 import com.example.gouni_mobile_application.domain.repository.AuthRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.util.UUID
 
 class AuthRepositoryImpl(
@@ -63,5 +65,13 @@ class AuthRepositoryImpl(
 
     override suspend fun logout() {
         currentUser = null
+    }
+
+    override suspend fun getUserById(userId: String): User? {
+        return userDao.getUserById(userId)?.toDomain()
+    }
+
+    override fun getUserByIdFlow(userId: String): Flow<User?> {
+        return userDao.getUserByIdFlow(userId).map { it?.toDomain() }
     }
 }
