@@ -71,7 +71,6 @@ fun CarRegistrationView(
             value = make,
             onValueChange = { make = it },
             label = { Text("Marca") },
-            placeholder = { Text("Ej: Toyota") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -81,7 +80,6 @@ fun CarRegistrationView(
             value = model,
             onValueChange = { model = it },
             label = { Text("Modelo") },
-            placeholder = { Text("Ej: Corolla") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -91,7 +89,6 @@ fun CarRegistrationView(
             value = licensePlate,
             onValueChange = { licensePlate = it },
             label = { Text("Placa") },
-            placeholder = { Text("Ej: ABC123") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -101,7 +98,6 @@ fun CarRegistrationView(
             value = color,
             onValueChange = { color = it },
             label = { Text("Color") },
-            placeholder = { Text("Ej: Blanco") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -111,7 +107,6 @@ fun CarRegistrationView(
             value = year,
             onValueChange = { year = it },
             label = { Text("Año") },
-            placeholder = { Text("Ej: 2020") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -131,7 +126,6 @@ fun CarRegistrationView(
             value = insuranceBrand,
             onValueChange = { insuranceBrand = it },
             label = { Text("Marca de Seguro") },
-            placeholder = { Text("Ej: Allianz") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -141,7 +135,6 @@ fun CarRegistrationView(
             value = registrationNumber,
             onValueChange = { registrationNumber = it },
             label = { Text("Número de Registro") },
-            placeholder = { Text("Número de registro vehicular") },
             modifier = Modifier.fillMaxWidth()
         )
 
