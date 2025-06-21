@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.ui.text.google.fonts)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 

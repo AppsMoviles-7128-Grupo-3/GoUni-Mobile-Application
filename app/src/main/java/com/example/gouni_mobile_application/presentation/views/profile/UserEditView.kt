@@ -3,6 +3,7 @@ package com.example.gouni_mobile_application.presentation.views.profile
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,12 +46,15 @@ fun UserEditView(
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
+            .imePadding()
     ) {
         Text(
             text = "Editar Información Personal",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp)
         )
+
+        Spacer(modifier = Modifier.padding(bottom = 100.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),

@@ -2,6 +2,9 @@ package com.example.gouni_mobile_application.presentation.views.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,8 +24,8 @@ fun SignInScreen(
     onSignInSuccess: (String) -> Unit,
     onNavigateToSignUp: () -> Unit
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("test@example.com") }
+    var password by remember { mutableStateOf("123456") }
 
     val authState by viewModel.authState.collectAsState()
 
@@ -38,16 +41,19 @@ fun SignInScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.height(50.dp))
+        
         Image(
             painter = painterResource(id = R.drawable.gounislogan),
             contentDescription = "GoUni Logo",
             modifier = Modifier.size(200.dp)
         )
-
 
         Text(
             text = "GoUni Driver",
@@ -126,5 +132,7 @@ fun SignInScreen(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         )
+        
+        Spacer(modifier = Modifier.height(100.dp))
     }
 }

@@ -3,6 +3,7 @@ package com.example.gouni_mobile_application.presentation.views.car
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -60,6 +61,7 @@ fun CarEditView(
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
+            .imePadding()
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -84,6 +86,7 @@ fun CarEditView(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        Spacer(modifier = Modifier.padding(bottom = 60.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),

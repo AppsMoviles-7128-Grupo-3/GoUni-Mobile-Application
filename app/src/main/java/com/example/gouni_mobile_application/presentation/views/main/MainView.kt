@@ -36,6 +36,7 @@ import com.example.gouni_mobile_application.presentation.views.profile.UserEditV
 import com.example.gouni_mobile_application.presentation.views.reservations.ReservationsScreen
 import com.example.gouni_mobile_application.presentation.views.routes.CreateRouteScreen
 import com.example.gouni_mobile_application.presentation.views.routes.MyRoutesView
+import com.example.gouni_mobile_application.presentation.views.routes.RouteDetailView
 import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
 import com.example.gouni_mobile_application.presentation.state.UiState
 
@@ -65,6 +66,8 @@ fun MainView(
 
     val authViewModel: com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel = viewModel(factory = viewModelFactory)
     val currentUser by authViewModel.currentUser.collectAsState()
+    
+    var selectedRoute by remember { mutableStateOf<com.example.gouni_mobile_application.domain.model.Route?>(null) }
 
     LaunchedEffect(userId) {
         if (userId.isNotEmpty()) {
@@ -78,31 +81,57 @@ fun MainView(
                 title = {
                     Text(
                         "GoUni Driver",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Medium
+                        style = MaterialTheme.typography.headlineSmall.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     )
                 },
                 actions = {
-                    IconButton(onClick = {
-                        authViewModel.logout()
-                        onLogout()
-                    }) {
+                    IconButton(
+                        onClick = {
+                            authViewModel.logout()
+                            onLogout()
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ExitToApp,
-                            contentDescription = "Logout"
+                            contentDescription = "Cerrar sesión"
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
             )
         },
-        bottomBar = { BottomNavigation(navController) }
+        bottomBar = { 
+            BottomNavigation(navController) 
+        },
+        containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = "my_routes",
             modifier = Modifier.padding(paddingValues)
         ) {
+            composable("my_routes") {
+                MyRoutesView(
+                    userId = userId,
+                    viewModel = viewModel(factory = viewModelFactory),
+                    onCreateRouteClick = {
+                        navController.navigate("create_route")
+                    },
+                    onRouteClick = { route ->
+                        selectedRoute = route
+                        navController.navigate("route_detail")
+                    }
+                )
+            }
             composable("create_route") {
                 CreateRouteScreen(
                     userId = userId,
@@ -110,13 +139,10 @@ fun MainView(
                     viewModelFactory = viewModelFactory,
                     onNavigateToCarRegistration = {
                         navController.navigate("car_registration")
+                    },
+                    onNavigateBack = {
+                        navController.popBackStack()
                     }
-                )
-            }
-            composable("my_routes") {
-                MyRoutesView(
-                    userId = userId,
-                    viewModel = viewModel(factory = viewModelFactory)
                 )
             }
             composable("reservations") {
@@ -209,6 +235,23 @@ fun MainView(
                     else -> {
                         navController.popBackStack()
                     }
+                }
+            }
+            composable("route_detail") {
+                selectedRoute?.let { route ->
+                    RouteDetailView(
+                        route = route,
+                        viewModelFactory = viewModelFactory,
+                        onNavigateBack = {
+                            navController.popBackStack()
+                        },
+                        onNavigateToReservations = { routeId ->
+                            navController.navigate("reservations")
+                        }
+                    )
+                } ?: run {
+                    // If no route is selected, go back
+                    navController.popBackStack()
                 }
             }
         }

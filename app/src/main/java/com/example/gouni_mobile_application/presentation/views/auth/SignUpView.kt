@@ -2,6 +2,7 @@ package com.example.gouni_mobile_application.presentation.views.auth
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -43,10 +44,13 @@ fun SignUpView(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 16.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        //Spacer(modifier = Modifier.padding(bottom = 60.dp))
+        
         Image(
             painter = painterResource(id = R.drawable.gounislogan),
             contentDescription = "GoUni Logo",
@@ -153,5 +157,7 @@ fun SignUpView(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
+        
+        Spacer(modifier = Modifier.height(100.dp))
     }
 }
