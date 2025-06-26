@@ -11,4 +11,6 @@ interface AuthRepository {
     suspend fun logout()
     suspend fun getUserById(userId: String): User?
     fun getUserByIdFlow(userId: String): Flow<User?>
+    suspend fun emailExists(email: String): Boolean
+    suspend fun updatePasswordByEmail(email: String, newPassword: String): Result<Unit>
 }

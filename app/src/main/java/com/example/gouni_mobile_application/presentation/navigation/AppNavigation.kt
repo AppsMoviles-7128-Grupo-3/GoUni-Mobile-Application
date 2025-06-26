@@ -12,6 +12,8 @@ import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.RegisterUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdateUserUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.GetUserByIdUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.EmailExistsUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.UpdatePasswordByEmailUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
@@ -19,6 +21,8 @@ import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.auth.SignInScreen
 import com.example.gouni_mobile_application.presentation.views.auth.SignUpView
+import com.example.gouni_mobile_application.presentation.views.auth.ForgotPasswordView
+import com.example.gouni_mobile_application.presentation.views.auth.ResetPasswordView
 import com.example.gouni_mobile_application.presentation.views.main.MainView
 
 @Composable
@@ -42,7 +46,9 @@ fun AppNavigation() {
         insertCarUseCase = InsertCarUseCase(application.carRepository),
         hasCarUseCase = HasCarUseCase(application.carRepository),
         deleteCarUseCase = DeleteCarUseCase(application.carRepository),
-        getUserByIdUseCase = GetUserByIdUseCase(application.authRepository)
+        getUserByIdUseCase = GetUserByIdUseCase(application.authRepository),
+        emailExistsUseCase = EmailExistsUseCase(application.authRepository),
+        updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository)
     )
 
     NavHost(
@@ -60,6 +66,9 @@ fun AppNavigation() {
                 },
                 onNavigateToSignUp = {
                     navController.navigate("signup")
+                },
+                onNavigateToForgotPassword = {
+                    navController.navigate("forgot_password")
                 }
             )
         }
@@ -75,6 +84,40 @@ fun AppNavigation() {
                 },
                 onNavigateToSignIn = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable("forgot_password") {
+            ForgotPasswordView(
+                viewModel = viewModel(factory = authViewModelFactory),
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToResetPassword = { email ->
+                    val encodedEmail = java.net.URLEncoder.encode(email, "UTF-8")
+                    navController.navigate("reset_password/$encodedEmail")
+                }
+            )
+        }
+
+        composable("reset_password/{email}") { backStackEntry ->
+            val encodedEmail = backStackEntry.arguments?.getString("email") ?: ""
+            val email = try {
+                java.net.URLDecoder.decode(encodedEmail, "UTF-8")
+            } catch (e: Exception) {
+                ""
+            }
+            ResetPasswordView(
+                viewModel = viewModel(factory = authViewModelFactory),
+                email = email,
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToSignIn = {
+                    navController.navigate("signin") {
+                        popUpTo("signin") { inclusive = true }
+                    }
                 }
             )
         }

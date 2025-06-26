@@ -19,6 +19,8 @@ import com.example.gouni_mobile_application.GoUniApplication
 import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdateUserUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.GetUserByIdUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.EmailExistsUseCase
+import com.example.gouni_mobile_application.domain.usecase.auth.UpdatePasswordByEmailUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
@@ -61,7 +63,9 @@ fun MainView(
         insertCarUseCase = InsertCarUseCase(application.carRepository),
         hasCarUseCase = HasCarUseCase(application.carRepository),
         deleteCarUseCase = DeleteCarUseCase(application.carRepository),
-        getUserByIdUseCase = GetUserByIdUseCase(application.authRepository)
+        getUserByIdUseCase = GetUserByIdUseCase(application.authRepository),
+        emailExistsUseCase = EmailExistsUseCase(application.authRepository),
+        updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository)
     )
 
     val authViewModel: com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel = viewModel(factory = viewModelFactory)

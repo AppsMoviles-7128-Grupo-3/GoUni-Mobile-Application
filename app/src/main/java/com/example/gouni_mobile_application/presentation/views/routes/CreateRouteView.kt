@@ -132,9 +132,8 @@ fun CreateRouteScreen(
                     .imePadding() // This handles keyboard padding
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                
-                // Add extra padding at the bottom to ensure content is not hidden behind keyboard
-                Spacer(modifier = Modifier.padding(bottom = 100.dp))
+
+                //Spacer(modifier = Modifier.padding(bottom = 100.dp))
 
                 when (val currentCarState = carState) {
                     is UiState.Success -> {

@@ -74,4 +74,28 @@ class AuthRepositoryImpl(
     override fun getUserByIdFlow(userId: String): Flow<User?> {
         return userDao.getUserByIdFlow(userId).map { it?.toDomain() }
     }
+
+    override suspend fun emailExists(email: String): Boolean {
+        return try {
+            val userEntity = userDao.getUserByEmail(email)
+            userEntity != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun updatePasswordByEmail(email: String, newPassword: String): Result<Unit> {
+        return try {
+            val userEntity = userDao.getUserByEmail(email)
+            if (userEntity != null) {
+                val updatedUserEntity = userEntity.copy(password = newPassword)
+                userDao.updateUser(updatedUserEntity)
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("Usuario no encontrado"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
