@@ -69,7 +69,7 @@ fun CarRegistrationView(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        Spacer(modifier = Modifier.padding(bottom = 100.dp))
+        //Spacer(modifier = Modifier.padding(bottom = 100.dp))
 
         OutlinedTextField(
             value = make,
