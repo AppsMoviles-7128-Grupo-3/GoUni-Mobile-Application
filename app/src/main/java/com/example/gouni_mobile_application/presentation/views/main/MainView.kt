@@ -29,12 +29,14 @@ import com.example.gouni_mobile_application.domain.usecase.reservation.GetReserv
 import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase
 import com.example.gouni_mobile_application.presentation.navigation.BottomNavigation
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.car.CarEditView
 import com.example.gouni_mobile_application.presentation.views.car.CarRegistrationView
 import com.example.gouni_mobile_application.presentation.views.profile.ProfileView
 import com.example.gouni_mobile_application.presentation.views.profile.UserEditView
+import com.example.gouni_mobile_application.presentation.views.reservations.PassengerDetailView
 import com.example.gouni_mobile_application.presentation.views.reservations.ReservationsScreen
 import com.example.gouni_mobile_application.presentation.views.routes.CreateRouteScreen
 import com.example.gouni_mobile_application.presentation.views.routes.MyRoutesView
@@ -65,13 +67,15 @@ fun MainView(
         deleteCarUseCase = DeleteCarUseCase(application.carRepository),
         getUserByIdUseCase = GetUserByIdUseCase(application.authRepository),
         emailExistsUseCase = EmailExistsUseCase(application.authRepository),
-        updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository)
+        updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository),
+        getRouteByIdUseCase = GetRouteByIdUseCase(application.routeRepository)
     )
 
     val authViewModel: com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel = viewModel(factory = viewModelFactory)
     val currentUser by authViewModel.currentUser.collectAsState()
     
     var selectedRoute by remember { mutableStateOf<com.example.gouni_mobile_application.domain.model.Route?>(null) }
+    var selectedReservation by remember { mutableStateOf<com.example.gouni_mobile_application.domain.model.StudentReservation?>(null) }
 
     LaunchedEffect(userId) {
         if (userId.isNotEmpty()) {
@@ -152,7 +156,11 @@ fun MainView(
             composable("reservations") {
                 ReservationsScreen(
                     userId = userId,
-                    viewModel = viewModel(factory = viewModelFactory)
+                    viewModel = viewModel(factory = viewModelFactory),
+                    onReservationClick = { reservation ->
+                        selectedReservation = reservation
+                        navController.navigate("passenger_detail")
+                    }
                 )
             }
             composable("profile") {
@@ -251,6 +259,19 @@ fun MainView(
                         },
                         onNavigateToReservations = { routeId ->
                             navController.navigate("reservations")
+                        }
+                    )
+                } ?: run {
+                    navController.popBackStack()
+                }
+            }
+            composable("passenger_detail") {
+                selectedReservation?.let { reservation ->
+                    PassengerDetailView(
+                        reservation = reservation,
+                        viewModelFactory = viewModelFactory,
+                        onNavigateBack = {
+                            navController.popBackStack()
                         }
                     )
                 } ?: run {

@@ -48,7 +48,8 @@ fun AppNavigation() {
         deleteCarUseCase = DeleteCarUseCase(application.carRepository),
         getUserByIdUseCase = GetUserByIdUseCase(application.authRepository),
         emailExistsUseCase = EmailExistsUseCase(application.authRepository),
-        updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository)
+        updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository),
+        getRouteByIdUseCase = com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase(application.routeRepository)
     )
 
     NavHost(

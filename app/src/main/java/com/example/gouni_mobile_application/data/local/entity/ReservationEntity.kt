@@ -11,6 +11,7 @@ data class ReservationEntity(
     val age: Int,
     val meetingPlace: String,
     val universityId: String,
+    val universityName: String = "",
     val profilePhoto: String?,
     val status: String
 )

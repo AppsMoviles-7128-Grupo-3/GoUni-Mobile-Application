@@ -17,6 +17,7 @@ import com.example.gouni_mobile_application.domain.usecase.reservation.GetReserv
 import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase
 
 class ViewModelFactory(
     private val loginUseCase: LoginUseCase,
@@ -33,7 +34,8 @@ class ViewModelFactory(
     private val deleteCarUseCase: DeleteCarUseCase,
     private val getUserByIdUseCase: GetUserByIdUseCase,
     private val emailExistsUseCase: EmailExistsUseCase,
-    private val updatePasswordByEmailUseCase: UpdatePasswordByEmailUseCase
+    private val updatePasswordByEmailUseCase: UpdatePasswordByEmailUseCase,
+    private val getRouteByIdUseCase: GetRouteByIdUseCase
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -50,6 +52,9 @@ class ViewModelFactory(
             }
             modelClass.isAssignableFrom(CarViewModel::class.java) -> {
                 CarViewModel(getCarUseCase, insertCarUseCase, hasCarUseCase, deleteCarUseCase) as T
+            }
+            modelClass.isAssignableFrom(PassengerDetailViewModel::class.java) -> {
+                PassengerDetailViewModel(getRouteByIdUseCase) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

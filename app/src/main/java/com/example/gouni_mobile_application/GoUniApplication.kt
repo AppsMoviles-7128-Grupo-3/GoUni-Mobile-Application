@@ -6,6 +6,7 @@ import com.example.gouni_mobile_application.data.local.database.AppDatabase
 import com.example.gouni_mobile_application.data.local.database.MIGRATION_1_2
 import com.example.gouni_mobile_application.data.local.database.MIGRATION_2_3
 import com.example.gouni_mobile_application.data.local.database.MIGRATION_3_4
+import com.example.gouni_mobile_application.data.local.database.MIGRATION_4_5
 import com.example.gouni_mobile_application.data.local.entity.UserEntity
 import com.example.gouni_mobile_application.data.repository.AuthRepositoryImpl
 import com.example.gouni_mobile_application.data.repository.CarRepositoryImpl
@@ -26,7 +27,7 @@ class GoUniApplication : Application() {
             applicationContext,
             AppDatabase::class.java,
             "gouni_database"
-        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build()
+        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build()
     }
 
     val authRepository: AuthRepository by lazy {

@@ -7,4 +7,5 @@ interface RouteRepository {
     suspend fun createRoute(route: Route): Result<String>
     fun getMyRoutes(driverId: String): Flow<List<Route>>
     suspend fun deleteRoute(routeId: String): Result<Unit>
+    fun getRouteById(routeId: String): Flow<Route?>
 }

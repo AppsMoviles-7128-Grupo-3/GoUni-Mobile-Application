@@ -97,13 +97,13 @@ fun CarRegistrationView(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .imePadding()
-        ) {
+            .verticalScroll(rememberScrollState())
+            .imePadding()
+    ) {
             // Form Section
             Column(
                 modifier = Modifier
@@ -144,7 +144,7 @@ fun CarRegistrationView(
                                 )
                             }
                             Spacer(modifier = Modifier.width(12.dp))
-                            Text(
+        Text(
                                 text = "Información Básica",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.SemiBold
@@ -154,10 +154,10 @@ fun CarRegistrationView(
                         }
 
                         // Make Field
-                        OutlinedTextField(
-                            value = make,
-                            onValueChange = { make = it },
-                            label = { Text("Marca") },
+        OutlinedTextField(
+            value = make,
+            onValueChange = { make = it },
+            label = { Text("Marca") },
                             placeholder = { Text("Ej: Toyota, Honda, Ford") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -166,15 +166,15 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.primary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
                         // Model Field
-                        OutlinedTextField(
-                            value = model,
-                            onValueChange = { model = it },
-                            label = { Text("Modelo") },
+        OutlinedTextField(
+            value = model,
+            onValueChange = { model = it },
+            label = { Text("Modelo") },
                             placeholder = { Text("Ej: Corolla, Civic, Focus") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -183,15 +183,15 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.primary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
                         // License Plate Field
-                        OutlinedTextField(
-                            value = licensePlate,
-                            onValueChange = { licensePlate = it },
-                            label = { Text("Placa") },
+        OutlinedTextField(
+            value = licensePlate,
+            onValueChange = { licensePlate = it },
+            label = { Text("Placa") },
                             placeholder = { Text("Ej: ABC-123") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -200,15 +200,15 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.primary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
                         // Color Field
-                        OutlinedTextField(
-                            value = color,
-                            onValueChange = { color = it },
-                            label = { Text("Color") },
+        OutlinedTextField(
+            value = color,
+            onValueChange = { color = it },
+            label = { Text("Color") },
                             placeholder = { Text("Ej: Blanco, Negro, Azul") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -217,15 +217,15 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.primary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
                         // Year Field
-                        OutlinedTextField(
-                            value = year,
-                            onValueChange = { year = it },
-                            label = { Text("Año") },
+        OutlinedTextField(
+            value = year,
+            onValueChange = { year = it },
+            label = { Text("Año") },
                             placeholder = { Text("Ej: 2020") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -296,16 +296,16 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.secondary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
                         // Insurance Info Field
-                        OutlinedTextField(
-                            value = insuranceInfo,
-                            onValueChange = { insuranceInfo = it },
-                            label = { Text("Información de Seguro") },
-                            placeholder = { Text("Número de póliza") },
+        OutlinedTextField(
+            value = insuranceInfo,
+            onValueChange = { insuranceInfo = it },
+            label = { Text("Información de Seguro") },
+            placeholder = { Text("Número de póliza") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.secondary,
@@ -313,15 +313,15 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.secondary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
                         // Insurance Brand Field
-                        OutlinedTextField(
-                            value = insuranceBrand,
-                            onValueChange = { insuranceBrand = it },
-                            label = { Text("Marca de Seguro") },
+        OutlinedTextField(
+            value = insuranceBrand,
+            onValueChange = { insuranceBrand = it },
+            label = { Text("Marca de Seguro") },
                             placeholder = { Text("Ej: Allianz, Mapfre, Rímac") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -330,42 +330,42 @@ fun CarRegistrationView(
                                 focusedLabelColor = MaterialTheme.colorScheme.secondary
                             ),
                             shape = RoundedCornerShape(8.dp)
-                        )
+        )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // Error Messages
-                when (val currentState = insertCarState) {
-                    is UiState.Error -> {
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.errorContainer
-                            ),
+        when (val currentState = insertCarState) {
+            is UiState.Error -> {
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    ),
                             shape = RoundedCornerShape(8.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = currentState.message,
-                                color = MaterialTheme.colorScheme.onErrorContainer,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = currentState.message,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.padding(16.dp),
                                 textAlign = TextAlign.Center
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    else -> {}
+                    )
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            else -> {}
+        }
 
                 // Action Buttons
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
+        Row(
+            modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    OutlinedButton(
-                        onClick = onNavigateBack,
+        ) {
+            OutlinedButton(
+                onClick = onNavigateBack,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colorScheme.primary
@@ -375,22 +375,22 @@ fun CarRegistrationView(
                             MaterialTheme.colorScheme.primary
                         ),
                         shape = RoundedCornerShape(8.dp)
-                    ) {
+            ) {
                         Text(
                             "Cancelar",
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 fontWeight = FontWeight.Medium
                             )
                         )
-                    }
+            }
 
-                    Button(
-                        onClick = {
-                            if (validateForm(make, model, licensePlate, color, year, insuranceInfo, insuranceBrand, registrationNumber)) {
-                                showRegistrationConfirmation = true
-                            }
-                        },
-                        modifier = Modifier.weight(1f),
+            Button(
+                onClick = {
+                    if (validateForm(make, model, licensePlate, color, year, insuranceInfo, insuranceBrand, registrationNumber)) {
+                        showRegistrationConfirmation = true
+                    }
+                },
+                modifier = Modifier.weight(1f),
                         enabled = insertCarState !is UiState.Loading && 
                                  validateForm(make, model, licensePlate, color, year, insuranceInfo, insuranceBrand, registrationNumber),
                         colors = ButtonDefaults.buttonColors(
@@ -398,20 +398,20 @@ fun CarRegistrationView(
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
                         shape = RoundedCornerShape(8.dp)
-                    ) {
-                        if (insertCarState is UiState.Loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        } else {
+            ) {
+                if (insertCarState is UiState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                } else {
                             Text(
                                 "Registrar",
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     fontWeight = FontWeight.Medium
                                 )
                             )
-                        }
+                }
                     }
                 }
 

@@ -7,6 +7,7 @@ data class StudentReservation(
     val age: Int,
     val meetingPlace: String,
     val universityId: String,
+    val universityName: String = "",
     val profilePhoto: String? = null,
     val status: ReservationStatus = ReservationStatus.PENDING
 )

@@ -14,6 +14,9 @@ class ReservationRepositoryImpl : ReservationRepository {
 
     override suspend fun updateReservationStatus(reservationId: String, status: ReservationStatus): Result<Unit> {
         return try {
+            // TODO: Implement backend call to update reservation status
+            // This would typically make an API call to update the reservation status
+            // For now, we just return success for demo purposes
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -23,31 +26,15 @@ class ReservationRepositoryImpl : ReservationRepository {
     private fun getMockReservations(): List<StudentReservation> {
         return listOf(
             StudentReservation(
-                id = "1",
-                routeId = "route1",
-                studentName = "Jinx",
+                id = "res_001",
+                routeId = "route1", // This would be the actual route ID from the backend
+                studentName = "María García López",
                 age = 20,
-                meetingPlace = "UTP",
+                meetingPlace = "Plaza Mayor, San Isidro",
                 universityId = "U20201234",
-                status = ReservationStatus.PENDING
-            ),
-            StudentReservation(
-                id = "2",
-                routeId = "route1",
-                studentName = "Vi",
-                age = 22,
-                meetingPlace = "UPC Sede San Isidro",
-                universityId = "U20201234",
-                status = ReservationStatus.ACCEPTED
-            ),
-            StudentReservation(
-                id = "3",
-                routeId = "route2",
-                studentName = "Ekko",
-                age = 19,
-                meetingPlace = "UPC Sede Monterrico",
-                universityId = "U20201234",
-                status = ReservationStatus.PENDING
+                universityName = "UPC",
+                profilePhoto = null, // Would be a URL from the backend
+                status = ReservationStatus.PENDING // This would be the actual status from backend
             )
         )
     }

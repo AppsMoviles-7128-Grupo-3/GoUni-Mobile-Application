@@ -11,6 +11,7 @@ fun ReservationEntity.toDomain(): StudentReservation = StudentReservation(
     age = age,
     meetingPlace = meetingPlace,
     universityId = universityId,
+    universityName = universityName,
     profilePhoto = profilePhoto,
     status = ReservationStatus.valueOf(status)
 )
@@ -22,6 +23,7 @@ fun StudentReservation.toEntity(): ReservationEntity = ReservationEntity(
     age = age,
     meetingPlace = meetingPlace,
     universityId = universityId,
+    universityName = universityName,
     profilePhoto = profilePhoto,
     status = status.name
 )
