@@ -99,7 +99,6 @@ fun SignInScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Forgot Password Link
         TextButton(
             onClick = onNavigateToForgotPassword,
             modifier = Modifier.align(Alignment.End)

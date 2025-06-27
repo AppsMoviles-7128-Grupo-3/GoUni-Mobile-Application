@@ -131,9 +131,7 @@ fun CreateRouteScreen(
                     .verticalScroll(rememberScrollState())
                     .imePadding() // This handles keyboard padding
             ) {
-                Spacer(modifier = Modifier.height(16.dp))
-
-                //Spacer(modifier = Modifier.padding(bottom = 100.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
                 when (val currentCarState = carState) {
                     is UiState.Success -> {
@@ -173,11 +171,10 @@ fun CreateRouteScreen(
                             
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Route details section
                             Text(
                                 text = "Detalles de la Ruta",
                                 style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.padding(bottom = 16.dp)
@@ -216,7 +213,7 @@ fun CreateRouteScreen(
                             Text(
                                 text = "Días de la Semana",
                                 style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.padding(bottom = 12.dp)
@@ -266,9 +263,9 @@ fun CreateRouteScreen(
                                                 text = displayName,
                                                 style = MaterialTheme.typography.bodyMedium.copy(
                                                     fontWeight = if (isSelected) 
-                                                        androidx.compose.ui.text.font.FontWeight.SemiBold 
+                                                        FontWeight.SemiBold
                                                     else 
-                                                        androidx.compose.ui.text.font.FontWeight.Normal
+                                                        FontWeight.Normal
                                                 ),
                                                 color = if (isSelected) 
                                                     MaterialTheme.colorScheme.onPrimary 
@@ -285,7 +282,7 @@ fun CreateRouteScreen(
                             Text(
                                 text = "Horarios",
                                 style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.padding(bottom = 12.dp)
@@ -351,7 +348,7 @@ fun CreateRouteScreen(
                             Text(
                                 text = "Información Adicional",
                                 style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.padding(bottom = 12.dp)
@@ -422,14 +419,13 @@ fun CreateRouteScreen(
                                 Text(
                                     text = "Crear Ruta",
                                     style = MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                                        fontWeight = FontWeight.SemiBold
                                     )
                                 )
                             }
 
                             Spacer(modifier = Modifier.height(16.dp))
                         } ?: run {
-                            // No car registered
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -524,7 +520,6 @@ fun CreateRouteScreen(
         }
     }
 
-    // Time Picker Dialogs
     if (showDepartureTimePicker) {
         val departureTimeState = rememberTimePickerState(
             initialHour = departureTime.hour,
@@ -589,7 +584,6 @@ fun CreateRouteScreen(
         )
     }
 
-    // Success Popup
     if (showSuccessPopup) {
         AlertDialog(
             onDismissRequest = { },

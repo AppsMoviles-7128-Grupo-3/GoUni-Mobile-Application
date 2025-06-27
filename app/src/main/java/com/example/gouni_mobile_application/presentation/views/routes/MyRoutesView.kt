@@ -72,7 +72,7 @@ fun MyRoutesView(
                 style = MaterialTheme.typography.headlineMedium.copy(
                     color = MaterialTheme.colorScheme.onSurface
                 ),
-                modifier = Modifier.padding(vertical = 24.dp)
+                modifier = Modifier.padding(vertical = 16.dp)
             )
 
             when (val currentState = routesState) {
@@ -232,7 +232,6 @@ fun RouteCard(
         Column(
             modifier = Modifier.padding(20.dp)
         ) {
-            // Header with route and delete button
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -264,7 +263,6 @@ fun RouteCard(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Route details
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -298,7 +296,6 @@ fun RouteCard(
                     )
                 }
 
-                // Price and seats info
                 Column(
                     horizontalAlignment = Alignment.End
                 ) {

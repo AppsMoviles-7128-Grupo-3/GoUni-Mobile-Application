@@ -1,18 +1,23 @@
 package com.example.gouni_mobile_application.presentation.views.auth
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -91,12 +96,12 @@ fun ResetPasswordView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
             Image(
                 painter = painterResource(id = R.drawable.gounislogan),
                 contentDescription = "GoUni Logo",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(100.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -140,7 +145,8 @@ fun ResetPasswordView(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedLabelColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -165,12 +171,12 @@ fun ResetPasswordView(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedLabelColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Password strength indicator
             if (newPassword.isNotEmpty()) {
                 val strength = getPasswordStrength(newPassword)
                 Card(
@@ -182,6 +188,7 @@ fun ResetPasswordView(
                             else -> MaterialTheme.colorScheme.surfaceVariant
                         }
                     ),
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -199,12 +206,12 @@ fun ResetPasswordView(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Password confirmation error
             if (newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword != confirmPassword) {
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer
                     ),
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
@@ -223,6 +230,7 @@ fun ResetPasswordView(
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer
                         ),
+                        shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
@@ -245,12 +253,13 @@ fun ResetPasswordView(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(48.dp),
                 enabled = resetPasswordState !is UiState.Loading && isValidPassword(newPassword, confirmPassword),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 if (resetPasswordState is UiState.Loading) {
                     CircularProgressIndicator(
@@ -280,7 +289,6 @@ fun ResetPasswordView(
         }
     }
 
-    // Success Dialog
     if (showSuccessDialog) {
         AlertDialog(
             onDismissRequest = { },
@@ -289,9 +297,26 @@ fun ResetPasswordView(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = "¡Contraseña Cambiada!",
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -309,13 +334,14 @@ fun ResetPasswordView(
                         showSuccessDialog = false
                         onNavigateToSignIn()
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Text("Iniciar Sesión")
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
-            shape = MaterialTheme.shapes.medium
+            shape = RoundedCornerShape(12.dp)
         )
     }
 }

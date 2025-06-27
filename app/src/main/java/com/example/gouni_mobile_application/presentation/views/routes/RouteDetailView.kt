@@ -57,10 +57,9 @@ fun RouteDetailView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(start = 24.dp, top = 0.dp, end = 24.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Route Header Card
             item {
                 Column(
                     modifier = Modifier
@@ -68,7 +67,6 @@ fun RouteDetailView(
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Route Direction
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,8 +115,7 @@ fun RouteDetailView(
                     }
                     
                     Spacer(modifier = Modifier.height(24.dp))
-                    
-                    // Time and Days Section
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -166,7 +163,6 @@ fun RouteDetailView(
                 }
             }
 
-            // Seats and Price Card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -179,7 +175,6 @@ fun RouteDetailView(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Available Seats
                         Column(
                             horizontalAlignment = Alignment.Start
                         ) {
@@ -195,8 +190,7 @@ fun RouteDetailView(
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
-                        
-                        // Price
+
                         Column(
                             horizontalAlignment = Alignment.End
                         ) {
@@ -216,7 +210,6 @@ fun RouteDetailView(
                 }
             }
 
-            // Reservations Preview Card
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),

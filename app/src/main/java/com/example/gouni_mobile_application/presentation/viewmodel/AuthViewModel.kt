@@ -36,7 +36,6 @@ class AuthViewModel(
     private val _updateState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val updateState: StateFlow<UiState<Unit>> = _updateState.asStateFlow()
 
-    // Password reset states
     private val _forgotPasswordState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val forgotPasswordState: StateFlow<UiState<Unit>> = _forgotPasswordState.asStateFlow()
 
@@ -123,7 +122,6 @@ class AuthViewModel(
         }
     }
 
-    // Simplified forgot password implementation - checks if email exists in database
     fun forgotPassword(email: String) {
         if (email.isBlank()) {
             _forgotPasswordState.value = UiState.Error("Por favor ingresa tu correo electrónico")
@@ -138,7 +136,6 @@ class AuthViewModel(
         viewModelScope.launch {
             _forgotPasswordState.value = UiState.Loading
             try {
-                // Check if email exists in the database
                 val emailExists = emailExistsUseCase(email)
                 
                 if (emailExists) {
@@ -152,7 +149,6 @@ class AuthViewModel(
         }
     }
 
-    // Real reset password implementation - updates password in database
     fun resetPassword(newPassword: String, email: String) {
         if (newPassword.length < 6) {
             _resetPasswordState.value = UiState.Error("La contraseña debe tener al menos 6 caracteres")
@@ -167,7 +163,6 @@ class AuthViewModel(
         viewModelScope.launch {
             _resetPasswordState.value = UiState.Loading
             try {
-                // Update password in the database
                 updatePasswordByEmailUseCase(email, newPassword)
                     .onSuccess {
                         _resetPasswordState.value = UiState.Success(Unit)

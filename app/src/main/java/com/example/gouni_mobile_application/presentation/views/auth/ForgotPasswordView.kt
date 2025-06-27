@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -82,12 +83,12 @@ fun ForgotPasswordView(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             
             Image(
                 painter = painterResource(id = R.drawable.gounislogan),
                 contentDescription = "GoUni Logo",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(100.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -121,7 +122,8 @@ fun ForgotPasswordView(
                     focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                     focusedLabelColor = MaterialTheme.colorScheme.primary
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -132,6 +134,7 @@ fun ForgotPasswordView(
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.errorContainer
                         ),
+                        shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
@@ -154,12 +157,13 @@ fun ForgotPasswordView(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(48.dp),
                 enabled = forgotPasswordState !is UiState.Loading && isValidEmail(email),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                ),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 if (forgotPasswordState is UiState.Loading) {
                     CircularProgressIndicator(

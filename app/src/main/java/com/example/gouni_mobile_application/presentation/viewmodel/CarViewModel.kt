@@ -62,7 +62,6 @@ class CarViewModel(
                 _insertCarState.value = UiState.Loading
                 insertCarUseCase(car)
                 _insertCarState.value = UiState.Success(Unit)
-                // Refresh car state after insertion
                 getCar(car.userId)
             } catch (e: Exception) {
                 _insertCarState.value = UiState.Error(e.message ?: "Error inserting car")
@@ -76,7 +75,6 @@ class CarViewModel(
                 _deleteCarState.value = UiState.Loading
                 deleteCarUseCase(car)
                 _deleteCarState.value = UiState.Success(Unit)
-                // Refresh car state after deletion
                 getCar(car.userId)
             } catch (e: Exception) {
                 _deleteCarState.value = UiState.Error(e.message ?: "Error deleting car")

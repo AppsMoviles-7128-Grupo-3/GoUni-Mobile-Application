@@ -254,7 +254,6 @@ fun MainView(
                         }
                     )
                 } ?: run {
-                    // If no route is selected, go back
                     navController.popBackStack()
                 }
             }
