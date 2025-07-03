@@ -1,41 +1,78 @@
 package com.example.gouni_mobile_application.data.repository
 
-import com.example.gouni_mobile_application.domain.model.ReservationStatus
+import com.example.gouni_mobile_application.data.remote.api.ReservationApi
+import com.example.gouni_mobile_application.data.remote.dto.ReservationDto
 import com.example.gouni_mobile_application.domain.model.StudentReservation
+import com.example.gouni_mobile_application.domain.model.ReservationStatus
 import com.example.gouni_mobile_application.domain.repository.ReservationRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class ReservationRepositoryImpl : ReservationRepository {
-
-    override fun getReservations(driverId: String): Flow<List<StudentReservation>> {
-        return flowOf(getMockReservations())
+class ReservationRepositoryImpl(
+    private val reservationApi: ReservationApi
+) : ReservationRepository {
+    override fun getReservations(driverId: String): Flow<List<StudentReservation>> = flow {
+        // Assuming backend provides a way to get reservations by driverId, otherwise adjust as needed
+        // Here, we fetch all routes by driver and then all reservations for those routes
+        // This is a placeholder; you may need to implement this logic in your backend or adjust here
+        emit(emptyList())
     }
 
-    override suspend fun updateReservationStatus(reservationId: String, status: ReservationStatus): Result<Unit> {
-        return try {
-            // TODO: Implement backend call to update reservation status
-            // This would typically make an API call to update the reservation status
-            // For now, we just return success for demo purposes
+    override suspend fun updateReservationStatus(reservationId: String, status: ReservationStatus): Result<Unit> = withContext(Dispatchers.IO) {
+        val response = reservationApi.updateStatus(reservationId.toLong(), status.name)
+        if (response.isSuccessful) {
             Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
+        } else {
+            Result.failure(Exception(response.message()))
         }
     }
 
-    private fun getMockReservations(): List<StudentReservation> {
-        return listOf(
-            StudentReservation(
-                id = "res_001",
-                routeId = "route1", // This would be the actual route ID from the backend
-                studentName = "María García López",
-                age = 20,
-                meetingPlace = "Plaza Mayor, San Isidro",
-                universityId = "U20201234",
-                universityName = "UPC",
-                profilePhoto = null, // Would be a URL from the backend
-                status = ReservationStatus.PENDING // This would be the actual status from backend
-            )
-        )
+    // Keep the other methods for direct API usage if needed
+    fun getReservationsByRoute(routeId: String): Flow<List<StudentReservation>> = flow {
+        val response = reservationApi.getByRouteId(routeId.toLong())
+        if (response.isSuccessful) {
+            emit(response.body()?.map { it.toDomain() } ?: emptyList())
+        } else {
+            emit(emptyList())
+        }
+    }
+
+    fun getReservationsByPassenger(passengerId: String): Flow<List<StudentReservation>> = flow {
+        val response = reservationApi.getByPassengerId(passengerId.toLong())
+        if (response.isSuccessful) {
+            emit(response.body()?.map { it.toDomain() } ?: emptyList())
+        } else {
+            emit(emptyList())
+        }
+    }
+
+    suspend fun createReservation(reservation: StudentReservation) {
+        reservationApi.create(reservation.toDto())
     }
 }
+
+// Extension functions for mapping
+private fun ReservationDto.toDomain() = StudentReservation(
+    id = id?.toString() ?: "",
+    routeId = routeId.toString(),
+    studentName = studentName,
+    age = age,
+    meetingPlace = meetingPlace,
+    universityId = universityId,
+    profilePhoto = profilePhoto,
+    status = try { ReservationStatus.valueOf(status) } catch (e: Exception) { ReservationStatus.PENDING }
+)
+
+private fun StudentReservation.toDto() = ReservationDto(
+    id = id.toLongOrNull(),
+    routeId = routeId.toLong(),
+    passengerId = 0L, // Provide a default value if not available
+    studentName = studentName,
+    age = age,
+    meetingPlace = meetingPlace,
+    universityId = universityId,
+    profilePhoto = profilePhoto,
+    status = status.name
+)

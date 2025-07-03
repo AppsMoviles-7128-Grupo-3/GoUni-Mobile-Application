@@ -34,6 +34,7 @@ fun AppNavigation() {
     val application = context.applicationContext as GoUniApplication
 
     val authViewModelFactory = ViewModelFactory(
+        application = application,
         loginUseCase = LoginUseCase(application.authRepository),
         registerUseCase = RegisterUseCase(application.authRepository),
         updateUserUseCase = UpdateUserUseCase(application.authRepository),

@@ -44,6 +44,7 @@ fun UserEditView(
 
     val authViewModel: AuthViewModel = viewModel(factory = viewModelFactory)
     val updateState by authViewModel.updateState.collectAsState()
+    val currentUser by authViewModel.currentUser.collectAsState()
 
     LaunchedEffect(updateState) {
         if (updateState is UiState.Success) {
@@ -51,6 +52,9 @@ fun UserEditView(
             authViewModel.resetUpdateState()
         }
     }
+
+    // Use current user data if available, otherwise use the passed user parameter
+    val displayUser = currentUser ?: user
 
     Scaffold(
         topBar = {
@@ -142,7 +146,7 @@ fun UserEditView(
 
                         // Current Name (Read-only)
                         OutlinedTextField(
-                            value = user.name,
+                            value = displayUser.name,
                             onValueChange = { },
                             label = { Text("Nombre Completo") },
                             modifier = Modifier.fillMaxWidth(),
@@ -481,12 +485,12 @@ fun UserEditView(
                 TextButton(
                     onClick = {
                         showSaveConfirmation = false
-                        val updatedUser = user.copy(
+                        val updatedUser = displayUser.copy(
                             email = email,
                             university = university,
                             userCode = userCode
                         )
-                        val finalPassword = if (password.isBlank()) "123456" else password // Default password
+                        val finalPassword = if (password.isNotBlank()) password else ""
                         authViewModel.updateUser(updatedUser, finalPassword)
                     }
                 ) {

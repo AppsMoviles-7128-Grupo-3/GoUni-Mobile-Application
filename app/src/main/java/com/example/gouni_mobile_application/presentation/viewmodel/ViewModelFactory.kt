@@ -1,5 +1,6 @@
 package com.example.gouni_mobile_application.presentation.viewmodel
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.gouni_mobile_application.domain.usecase.auth.EmailExistsUseCase
@@ -20,6 +21,7 @@ import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseC
 import com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase
 
 class ViewModelFactory(
+    private val application: Application,
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
@@ -45,7 +47,7 @@ class ViewModelFactory(
                 AuthViewModel(loginUseCase, registerUseCase, updateUserUseCase, logoutUseCase, getUserByIdUseCase, emailExistsUseCase, updatePasswordByEmailUseCase) as T
             }
             modelClass.isAssignableFrom(RoutesViewModel::class.java) -> {
-                RoutesViewModel(getMyRoutesUseCase, createRouteUseCase, deleteRouteUseCase) as T
+                RoutesViewModel(getMyRoutesUseCase, createRouteUseCase, deleteRouteUseCase, application) as T
             }
             modelClass.isAssignableFrom(ReservationsViewModel::class.java) -> {
                 ReservationsViewModel(getReservationsUseCase) as T

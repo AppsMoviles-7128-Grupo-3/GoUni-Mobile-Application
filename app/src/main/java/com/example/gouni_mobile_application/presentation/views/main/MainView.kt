@@ -53,6 +53,7 @@ fun MainView(
     onLogout: () -> Unit
 ) {
     val viewModelFactory = ViewModelFactory(
+        application = application,
         loginUseCase = com.example.gouni_mobile_application.domain.usecase.auth.LoginUseCase(application.authRepository),
         registerUseCase = com.example.gouni_mobile_application.domain.usecase.auth.RegisterUseCase(application.authRepository),
         updateUserUseCase = UpdateUserUseCase(application.authRepository),
@@ -199,6 +200,8 @@ fun MainView(
                     UserEditView(
                         user = user,
                         onUserUpdated = {
+                            // Force reload current user to ensure profile view shows updated data
+                            authViewModel.loadCurrentUser(userId)
                             navController.popBackStack()
                         },
                         onNavigateBack = {

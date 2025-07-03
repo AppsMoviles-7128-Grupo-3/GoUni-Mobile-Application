@@ -101,9 +101,12 @@ class AuthViewModel(
             _updateState.value = UiState.Loading
             try {
                 updateUserUseCase(user, password)
-                    .onSuccess {
+                    .onSuccess { updatedUser ->
                         _updateState.value = UiState.Success(Unit)
-                        loadCurrentUser(user.id)
+                        // Update current user with the returned updated data
+                        _currentUser.value = updatedUser
+                        // Add a small delay to ensure the UI updates properly
+                        delay(100)
                     }
                     .onFailure { error ->
                         _updateState.value = UiState.Error(error.message ?: "Error al actualizar")
