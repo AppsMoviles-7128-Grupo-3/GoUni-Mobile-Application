@@ -147,7 +147,7 @@ fun SignUpView(
                         value = name,
                         onValueChange = { name = it },
                         label = { Text("Nombre Completo") },
-                        placeholder = { Text("Ej: Juan Pérez") },
+                        placeholder = { Text("Diogo Jota") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -163,7 +163,7 @@ fun SignUpView(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text("Correo Electrónico") },
-                        placeholder = { Text("example@example.com") },
+                        placeholder = { Text("test@example.com") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -222,7 +222,7 @@ fun SignUpView(
                         value = university,
                         onValueChange = { university = it },
                         label = { Text("Universidad") },
-                        placeholder = { Text("Ej: UPC, PUCP, UNI") },
+                        placeholder = { Text("UPC") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.secondary,
@@ -238,7 +238,7 @@ fun SignUpView(
                         value = userCode,
                         onValueChange = { userCode = it },
                         label = { Text("Código de Estudiante") },
-                        placeholder = { Text("Ej: U20201234") },
+                        placeholder = { Text("u20201234") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = MaterialTheme.colorScheme.secondary,
@@ -321,7 +321,6 @@ fun SignUpView(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Confirm Password Field
                     OutlinedTextField(
                         value = confirmPassword,
                         onValueChange = { confirmPassword = it },
