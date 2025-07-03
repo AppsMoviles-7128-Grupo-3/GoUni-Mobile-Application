@@ -125,7 +125,6 @@ fun ClickableReservationCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Profile Avatar
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -151,7 +150,6 @@ fun ClickableReservationCard(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Passenger Information
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = reservation.studentName,
@@ -200,11 +198,9 @@ fun ClickableReservationCard(
                 }
             }
 
-            // Status and Arrow
             Column(
                 horizontalAlignment = Alignment.End
             ) {
-                // Status Badge
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = when (reservation.status) {
@@ -230,8 +226,7 @@ fun ClickableReservationCard(
                 }
                 
                 Spacer(modifier = Modifier.height(8.dp))
-                
-                // Arrow Icon
+
                 Icon(
                     Icons.Default.ChevronRight,
                     contentDescription = "Ver detalles",

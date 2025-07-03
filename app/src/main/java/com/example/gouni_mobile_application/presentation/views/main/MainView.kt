@@ -200,7 +200,6 @@ fun MainView(
                     UserEditView(
                         user = user,
                         onUserUpdated = {
-                            // Force reload current user to ensure profile view shows updated data
                             authViewModel.loadCurrentUser(userId)
                             navController.popBackStack()
                         },

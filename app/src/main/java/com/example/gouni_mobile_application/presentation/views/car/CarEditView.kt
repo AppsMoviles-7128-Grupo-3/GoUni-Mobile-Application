@@ -117,13 +117,11 @@ fun CarEditView(
                 .verticalScroll(rememberScrollState())
                 .imePadding()
         ) {
-            // Form Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
             ) {
-                // Current Information Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -135,7 +133,6 @@ fun CarEditView(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        // Header
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(bottom = 16.dp)
@@ -166,7 +163,6 @@ fun CarEditView(
                             )
                         }
 
-                        // Read-only fields
                         OutlinedTextField(
                             value = "${car.make} ${car.model}",
                             onValueChange = { },
@@ -233,7 +229,6 @@ fun CarEditView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Editable Information Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -245,7 +240,6 @@ fun CarEditView(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        // Header
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(bottom = 16.dp)
@@ -276,7 +270,6 @@ fun CarEditView(
                             )
                         }
 
-                        // Color Field
                         OutlinedTextField(
                             value = color,
                             onValueChange = { color = it },
@@ -293,7 +286,6 @@ fun CarEditView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Insurance Info Field
                         OutlinedTextField(
                             value = insuranceInfo,
                             onValueChange = { insuranceInfo = it },
@@ -310,7 +302,6 @@ fun CarEditView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Insurance Brand Field
                         OutlinedTextField(
                             value = insuranceBrand,
                             onValueChange = { insuranceBrand = it },
@@ -329,7 +320,6 @@ fun CarEditView(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Error Messages
                 when (val currentState = updateCarState) {
                     is UiState.Error -> {
                         Card(
@@ -374,7 +364,6 @@ fun CarEditView(
                     else -> {}
                 }
 
-                // Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -483,7 +472,7 @@ fun CarEditView(
                             insuranceInfo = insuranceInfo,
                             insuranceBrand = insuranceBrand
                         )
-                        carViewModel.insertCar(updatedCar) // Using insertCar for update (replace)
+                        carViewModel.insertCar(updatedCar)
                     }
                 ) {
                     Text(

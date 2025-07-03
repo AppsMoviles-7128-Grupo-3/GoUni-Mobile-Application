@@ -103,9 +103,7 @@ class AuthViewModel(
                 updateUserUseCase(user, password)
                     .onSuccess { updatedUser ->
                         _updateState.value = UiState.Success(Unit)
-                        // Update current user with the returned updated data
                         _currentUser.value = updatedUser
-                        // Add a small delay to ensure the UI updates properly
                         delay(100)
                     }
                     .onFailure { error ->

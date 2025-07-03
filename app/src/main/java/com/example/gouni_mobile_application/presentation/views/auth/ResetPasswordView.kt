@@ -383,9 +383,9 @@ private fun getPasswordStrength(password: String): String {
     val hasSpecial = password.any { !it.isLetterOrDigit() }
     
     return when {
-        password.length < 6 -> "Weak"
-        password.length >= 8 && hasLetter && hasDigit && hasSpecial -> "Strong"
-        password.length >= 6 && hasLetter && hasDigit -> "Medium"
-        else -> "Weak"
+        password.length < 6 -> "Seguridad: Muy Débil"
+        password.length >= 8 && hasLetter && hasDigit && hasSpecial -> "Seguridad: Fuerte"
+        password.length >= 6 && hasLetter && hasDigit -> "Seguridad: Media"
+        else -> "Seguridad: Débil"
     }
 } 

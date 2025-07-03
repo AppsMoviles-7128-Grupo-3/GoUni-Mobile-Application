@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,8 +40,7 @@ fun ProfileView(
     var showEditOptions by remember { mutableStateOf(false) }
 
     val updateState by viewModel.updateState.collectAsState()
-    
-    // Car ViewModel
+
     val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
     val carState by carViewModel.carState.collectAsState()
     val hasCarState by carViewModel.hasCarState.collectAsState()
@@ -61,7 +61,6 @@ fun ProfileView(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        // Minimalist Header Section
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -74,7 +73,6 @@ fun ProfileView(
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Profile Avatar
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -93,7 +91,6 @@ fun ProfileView(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // User Name
                 Text(
                     text = user.name,
                     style = MaterialTheme.typography.titleLarge.copy(
@@ -105,7 +102,6 @@ fun ProfileView(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // User Role
                 Card(
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -145,7 +141,6 @@ fun ProfileView(
                     )
                 }
 
-                // Dropdown Menu
                 DropdownMenu(
                     expanded = showEditOptions,
                     onDismissRequest = { showEditOptions = false },
@@ -189,13 +184,11 @@ fun ProfileView(
             }
         }
 
-        // Content Section
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp, 0.dp, 24.dp, 24.dp),
         ) {
-            // Personal Information Card
             ModernInfoCard(
                 title = "Información Personal",
                 icon = Icons.Default.Person,
@@ -209,7 +202,6 @@ fun ProfileView(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Vehicle Information Section
             when (val currentCarState = carState) {
                 is UiState.Success -> {
                     currentCarState.data?.let { car ->
@@ -242,7 +234,6 @@ fun ProfileView(
                 }
             }
 
-            // Success/Error Messages
             when (val currentState = updateState) {
                 is UiState.Success -> {
                     Spacer(modifier = Modifier.height(16.dp))
@@ -275,7 +266,6 @@ fun ModernInfoCard(
         Column(
             modifier = Modifier.padding(20.dp)
         ) {
-            // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -306,7 +296,6 @@ fun ModernInfoCard(
                 )
             }
 
-            // Items
             items.forEach { item ->
                 Row(
                     modifier = Modifier
@@ -337,9 +326,9 @@ fun ModernInfoCard(
                     }
                 }
                 if (items.last() != item) {
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.padding(vertical = 6.dp),
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+                        thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
                     )
                 }
             }

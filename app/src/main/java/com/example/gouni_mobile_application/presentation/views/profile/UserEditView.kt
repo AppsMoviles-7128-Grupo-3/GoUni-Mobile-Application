@@ -53,7 +53,6 @@ fun UserEditView(
         }
     }
 
-    // Use current user data if available, otherwise use the passed user parameter
     val displayUser = currentUser ?: user
 
     Scaffold(
@@ -95,13 +94,11 @@ fun UserEditView(
                 .verticalScroll(rememberScrollState())
                 .imePadding()
         ) {
-            // Form Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
             ) {
-                // Current Information Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -113,7 +110,6 @@ fun UserEditView(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        // Header
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(bottom = 16.dp)
@@ -144,7 +140,6 @@ fun UserEditView(
                             )
                         }
 
-                        // Current Name (Read-only)
                         OutlinedTextField(
                             value = displayUser.name,
                             onValueChange = { },
@@ -163,7 +158,6 @@ fun UserEditView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Personal Information Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -175,7 +169,6 @@ fun UserEditView(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        // Header
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(bottom = 16.dp)
@@ -206,7 +199,6 @@ fun UserEditView(
                             )
                         }
 
-                        // Email Field
                         OutlinedTextField(
                             value = email,
                             onValueChange = { email = it },
@@ -223,7 +215,6 @@ fun UserEditView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // University Field
                         OutlinedTextField(
                             value = university,
                             onValueChange = { university = it },
@@ -240,7 +231,6 @@ fun UserEditView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // User Code Field
                         OutlinedTextField(
                             value = userCode,
                             onValueChange = { userCode = it },
@@ -259,7 +249,6 @@ fun UserEditView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Security Information Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -271,7 +260,6 @@ fun UserEditView(
                     Column(
                         modifier = Modifier.padding(20.dp)
                     ) {
-                        // Header
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(bottom = 16.dp)
@@ -302,7 +290,6 @@ fun UserEditView(
                             )
                         }
 
-                        // Password Field
                         OutlinedTextField(
                             value = password,
                             onValueChange = { password = it },
@@ -320,7 +307,6 @@ fun UserEditView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Confirm Password Field
                         OutlinedTextField(
                             value = confirmPassword,
                             onValueChange = { confirmPassword = it },
@@ -336,7 +322,6 @@ fun UserEditView(
                             shape = RoundedCornerShape(8.dp)
                         )
 
-                        // Password validation
                         if (password.isNotEmpty() && confirmPassword.isNotEmpty() && password != confirmPassword) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Card(
@@ -358,7 +343,6 @@ fun UserEditView(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Error Messages
                 when (val currentState = updateState) {
                     is UiState.Error -> {
                         Card(
@@ -381,7 +365,6 @@ fun UserEditView(
                     else -> {}
                 }
 
-                // Action Buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

@@ -158,7 +158,7 @@ fun CarRegistrationView(
             value = make,
             onValueChange = { make = it },
             label = { Text("Marca") },
-                            placeholder = { Text("Ej: Toyota, Honda, Ford") },
+                            placeholder = { Text("Mazda") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -175,7 +175,7 @@ fun CarRegistrationView(
             value = model,
             onValueChange = { model = it },
             label = { Text("Modelo") },
-                            placeholder = { Text("Ej: Corolla, Civic, Focus") },
+                            placeholder = { Text("CX-30") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -192,7 +192,7 @@ fun CarRegistrationView(
             value = licensePlate,
             onValueChange = { licensePlate = it },
             label = { Text("Placa") },
-                            placeholder = { Text("Ej: ABC-123") },
+                            placeholder = { Text("ABC123") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -209,7 +209,6 @@ fun CarRegistrationView(
             value = color,
             onValueChange = { color = it },
             label = { Text("Color") },
-                            placeholder = { Text("Ej: Blanco, Negro, Azul") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -226,7 +225,7 @@ fun CarRegistrationView(
             value = year,
             onValueChange = { year = it },
             label = { Text("Año") },
-                            placeholder = { Text("Ej: 2020") },
+                            placeholder = { Text("2020") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -288,7 +287,7 @@ fun CarRegistrationView(
                             value = registrationNumber,
                             onValueChange = { registrationNumber = it },
                             label = { Text("Número de Registro") },
-                            placeholder = { Text("Número de registro del vehículo") },
+                            placeholder = { Text("VIN de tu carro") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.secondary,
@@ -321,8 +320,8 @@ fun CarRegistrationView(
         OutlinedTextField(
             value = insuranceBrand,
             onValueChange = { insuranceBrand = it },
-            label = { Text("Marca de Seguro") },
-                            placeholder = { Text("Ej: Allianz, Mapfre, Rímac") },
+            label = { Text("Empresa de Seguro") },
+                            placeholder = { Text("Pacifico") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = MaterialTheme.colorScheme.secondary,

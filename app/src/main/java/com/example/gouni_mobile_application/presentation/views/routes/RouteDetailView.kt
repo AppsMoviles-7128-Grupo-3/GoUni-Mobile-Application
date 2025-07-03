@@ -83,8 +83,7 @@ fun RouteDetailView(
         ) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
-                
-                // Route Header Card
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -209,7 +208,6 @@ fun RouteDetailView(
             }
 
             item {
-                // Route Stats Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -263,7 +261,6 @@ fun RouteDetailView(
             }
 
             item {
-                // Reservations Preview Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -442,7 +439,6 @@ fun PassengerPreviewCard(reservation: StudentReservation) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Profile Avatar
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -461,7 +457,6 @@ fun PassengerPreviewCard(reservation: StudentReservation) {
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Passenger Info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = reservation.studentName,
@@ -476,8 +471,7 @@ fun PassengerPreviewCard(reservation: StudentReservation) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
-            // Status Badge
+
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = when (reservation.status) {

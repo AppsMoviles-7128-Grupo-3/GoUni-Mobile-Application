@@ -76,14 +76,12 @@ fun PassengerDetailView(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
         ) {
-            // Passenger Information Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Passenger Header Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -99,7 +97,6 @@ fun PassengerDetailView(
                         horizontalAlignment = Alignment.CenterHorizontally
 
                     ) {
-                        // Profile Avatar
                         Box(
                             modifier = Modifier
                                 .size(80.dp)
@@ -118,7 +115,6 @@ fun PassengerDetailView(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Passenger Name
                         Text(
                             text = reservation.studentName,
                             style = MaterialTheme.typography.headlineSmall.copy(
@@ -129,7 +125,6 @@ fun PassengerDetailView(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Status Badge
                         Card(
                             colors = CardDefaults.cardColors(
                                 containerColor = when (reservation.status) {
@@ -158,7 +153,6 @@ fun PassengerDetailView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Passenger Details Card
                 ModernInfoCard(
                     title = "Información del Pasajero",
                     icon = Icons.Default.Person,
@@ -173,7 +167,6 @@ fun PassengerDetailView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Route Information Card
                 when (val currentRouteState = routeState) {
                     is com.example.gouni_mobile_application.presentation.state.UiState.Success -> {
                         currentRouteState.data?.let { route ->
@@ -200,7 +193,6 @@ fun PassengerDetailView(
                                 )
                             )
                         } ?: run {
-                            // Show a simple error message instead of ErrorCard
                             Card(
                                 modifier = Modifier.fillMaxWidth(),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -233,7 +225,6 @@ fun PassengerDetailView(
                         LoadingCard()
                     }
                     is com.example.gouni_mobile_application.presentation.state.UiState.Error -> {
-                        // Show a simple error message instead of ErrorCard
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -289,7 +280,6 @@ fun ModernInfoCard(
         Column(
             modifier = Modifier.padding(20.dp)
         ) {
-            // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -320,7 +310,6 @@ fun ModernInfoCard(
                 )
             }
 
-            // Items
             items.forEach { item ->
                 Row(
                     modifier = Modifier

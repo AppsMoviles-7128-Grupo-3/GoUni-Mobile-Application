@@ -63,20 +63,18 @@ fun SignUpView(
             .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Form Section
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            // Title Section
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Logo
                 Image(
                     painter = painterResource(id = R.drawable.gounislogan),
                     contentDescription = "GoUni Logo",
@@ -85,7 +83,6 @@ fun SignUpView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Title
                 Text(
                     text = "Crear Cuenta",
                     style = MaterialTheme.typography.headlineMedium.copy(
@@ -97,7 +94,6 @@ fun SignUpView(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Subtitle
                 Text(
                     text = "Únete a la comunidad GoUni",
                     style = MaterialTheme.typography.bodyLarge,
@@ -106,7 +102,6 @@ fun SignUpView(
                 )
             }
 
-            // Personal Information Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -118,7 +113,6 @@ fun SignUpView(
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
-                    // Header
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -149,7 +143,6 @@ fun SignUpView(
                         )
                     }
 
-                    // Name Field
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
@@ -166,7 +159,6 @@ fun SignUpView(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Email Field
                     OutlinedTextField(
                         value = email,
                         onValueChange = { email = it },
@@ -185,7 +177,6 @@ fun SignUpView(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Academic Information Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -197,7 +188,6 @@ fun SignUpView(
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
-                    // Header
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -228,7 +218,6 @@ fun SignUpView(
                         )
                     }
 
-                    // University Field
                     OutlinedTextField(
                         value = university,
                         onValueChange = { university = it },
@@ -245,7 +234,6 @@ fun SignUpView(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // User Code Field
                     OutlinedTextField(
                         value = userCode,
                         onValueChange = { userCode = it },
@@ -264,7 +252,6 @@ fun SignUpView(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Security Information Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -276,7 +263,6 @@ fun SignUpView(
                 Column(
                     modifier = Modifier.padding(20.dp)
                 ) {
-                    // Header
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -307,7 +293,6 @@ fun SignUpView(
                         )
                     }
 
-                    // Password Field
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
@@ -363,7 +348,6 @@ fun SignUpView(
                         shape = RoundedCornerShape(8.dp)
                     )
 
-                    // Password validation
                     if (password.isNotEmpty() && confirmPassword.isNotEmpty() && password != confirmPassword) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Card(
@@ -385,7 +369,6 @@ fun SignUpView(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Error Messages
             when (val currentState = authState) {
                 is UiState.Error -> {
                     Card(
@@ -408,7 +391,6 @@ fun SignUpView(
                 else -> {}
             }
 
-            // Register Button
             Button(
                 onClick = { 
                     if (password == confirmPassword) {
@@ -444,7 +426,6 @@ fun SignUpView(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sign In Link
             TextButton(
                 onClick = onNavigateToSignIn,
                 modifier = Modifier.fillMaxWidth()
