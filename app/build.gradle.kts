@@ -16,6 +16,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "GOOGLE_MAPS_API_KEY", "\"${project.findProperty("GOOGLE_MAPS_API_KEY") ?: ""}\"")
     }
 
     buildTypes {
@@ -39,6 +40,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -64,8 +66,15 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.foundation.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+
+    // Google Maps SDK and Compose
+    implementation("com.google.android.gms:play-services-maps:19.2.0")
+    implementation("com.google.maps.android:maps-compose:6.6.0")
+    // PolyUtil for decoding polylines
+    implementation(libs.mapsutilsktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

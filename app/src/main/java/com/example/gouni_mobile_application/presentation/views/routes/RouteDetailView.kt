@@ -29,6 +29,25 @@ import com.example.gouni_mobile_application.presentation.viewmodel.ReservationsV
 import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import java.time.format.DateTimeFormatter
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.Polyline
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
+import com.example.gouni_mobile_application.presentation.viewmodel.RoutesViewModel
+import com.example.gouni_mobile_application.presentation.viewmodel.MapUiState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.withContext
+import com.example.gouni_mobile_application.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,16 +55,44 @@ fun RouteDetailView(
     route: Route,
     viewModelFactory: ViewModelFactory,
     onNavigateBack: () -> Unit,
-    onNavigateToReservations: (String) -> Unit
+    onNavigateToReservations: (String) -> Unit,
+    startLat: Double? = null,
+    startLng: Double? = null,
+    endLat: Double? = null,
+    endLng: Double? = null,
+    startPlaceId: String? = null,
+    endPlaceId: String? = null
 ) {
     val reservationsViewModel: ReservationsViewModel = viewModel(factory = viewModelFactory)
     val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
+    val routesViewModel: RoutesViewModel = viewModel(factory = viewModelFactory)
     val reservationsState by reservationsViewModel.reservationsState.collectAsState()
     val carState by carViewModel.carByIdState.collectAsState()
+    val mapState by routesViewModel.mapState.collectAsState()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(route.id) {
+    LaunchedEffect(route.id, startLat, startLng, endLat, endLng, startPlaceId, endPlaceId) {
         reservationsViewModel.loadReservationsByRoute(route.id)
         carViewModel.getCarById(route.carId)
+        if (startLat != null && startLng != null && endLat != null && endLng != null) {
+            routesViewModel.setMapCoordinates(startLat, startLng, endLat, endLng)
+        } else if (startPlaceId != null && endPlaceId != null) {
+            coroutineScope.launch {
+                val apiKey = context.getString(R.string.google_maps_api_key)
+                val startCoords = getPlaceCoordinates(startPlaceId, apiKey)
+                val endCoords = getPlaceCoordinates(endPlaceId, apiKey)
+                if (startCoords != null && endCoords != null) {
+                    val (startLatVal, startLngVal) = startCoords
+                    val (endLatVal, endLngVal) = endCoords
+                    routesViewModel.setMapCoordinates(startLatVal, startLngVal, endLatVal, endLngVal)
+                } else {
+                    routesViewModel.setMapError("No se pudieron obtener las coordenadas de los lugares.")
+                }
+            }
+        } else {
+            routesViewModel.setMapError("No hay información de ubicación disponible para esta ruta.")
+        }
     }
 
     Scaffold(
@@ -458,6 +505,20 @@ fun RouteDetailView(
                 }
             }
 
+            // --- Default Map (no markers, no polyline) ---
+            item {
+                val defaultLatLng = com.google.android.gms.maps.model.LatLng(-12.0464, -77.0428) // Lima, Peru
+                val cameraPositionState = rememberCameraPositionState {
+                    position = com.google.android.gms.maps.model.CameraPosition.fromLatLngZoom(defaultLatLng, 12f)
+                }
+                GoogleMap(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(220.dp),
+                    cameraPositionState = cameraPositionState
+                ) {}
+            }
+
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -675,5 +736,32 @@ fun PassengerPreviewCard(reservation: StudentReservation) {
                 )
             }
         }
+    }
+}
+
+// Helper function to fetch coordinates from placeId
+suspend fun getPlaceCoordinates(placeId: String, apiKey: String): Pair<Double, Double>? {
+    return withContext(Dispatchers.IO) {
+        val url = "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$apiKey&language=es"
+        val conn = URL(url).openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        conn.connectTimeout = 5000
+        conn.readTimeout = 5000
+        try {
+            if (conn.responseCode == 200) {
+                val response = conn.inputStream.bufferedReader().readText()
+                val json = JSONObject(response)
+                val result = json.getJSONObject("result")
+                val location = result.getJSONObject("geometry").getJSONObject("location")
+                val lat = location.getDouble("lat")
+                val lng = location.getDouble("lng")
+                return@withContext lat to lng
+            }
+        } catch (e: Exception) {
+            // Handle error
+        } finally {
+            conn.disconnect()
+        }
+        null
     }
 }

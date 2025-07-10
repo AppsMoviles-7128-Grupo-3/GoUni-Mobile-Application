@@ -49,6 +49,33 @@ import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFact
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import com.example.gouni_mobile_application.BuildConfig
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import org.json.JSONObject
+import java.net.URLEncoder
+import java.net.HttpURLConnection
+import java.net.URL
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.toSize
+import com.example.gouni_mobile_application.R
+import androidx.compose.material.icons.filled.Close
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,10 +84,17 @@ fun CreateRouteScreen(
     viewModel: RoutesViewModel,
     viewModelFactory: ViewModelFactory,
     onNavigateToCarRegistration: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    navController: androidx.navigation.NavHostController
 ) {
+    var startDisplay by remember { mutableStateOf("") }
+    var endDisplay by remember { mutableStateOf("") }
     var start by remember { mutableStateOf("") }
     var end by remember { mutableStateOf("") }
+    var startLat by remember { mutableStateOf<Double?>(null) }
+    var startLng by remember { mutableStateOf<Double?>(null) }
+    var endLat by remember { mutableStateOf<Double?>(null) }
+    var endLng by remember { mutableStateOf<Double?>(null) }
     var selectedDays by remember { mutableStateOf(setOf<DayOfWeek>()) }
     var departureTime by remember { mutableStateOf(LocalTime.of(8, 0)) }
     var arrivalTime by remember { mutableStateOf(LocalTime.of(9, 0)) }
@@ -70,6 +104,9 @@ fun CreateRouteScreen(
     var showDepartureTimePicker by remember { mutableStateOf(false) }
     var showArrivalTimePicker by remember { mutableStateOf(false) }
     var showSuccessPopup by remember { mutableStateOf(false) }
+
+    var startPlaceId by remember { mutableStateOf<String?>(null) }
+    var endPlaceId by remember { mutableStateOf<String?>(null) }
 
     val createRouteState by viewModel.createRouteState.collectAsState()
 
@@ -180,32 +217,34 @@ fun CreateRouteScreen(
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
 
-                            OutlinedTextField(
-                                value = start,
-                                onValueChange = { start = it },
-                                label = { Text("Desde") },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                    focusedLabelColor = MaterialTheme.colorScheme.primary
-                                ),
-                                shape = MaterialTheme.shapes.medium
+                            PlacesAutocompleteTextField(
+                                label = "Desde",
+                                value = startDisplay,
+                                onValueChange = { startDisplay = it },
+                                onPlaceSelected = { description, lat, lng, placeId ->
+                                    startDisplay = description
+                                    start = description.substringBefore(",").trim()
+                                    startLat = lat
+                                    startLng = lng
+                                    startPlaceId = placeId
+                                },
+                                onClear = { startLat = null; startLng = null; startPlaceId = null; start = ""; startDisplay = "" }
                             )
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            OutlinedTextField(
-                                value = end,
-                                onValueChange = { end = it },
-                                label = { Text("Hasta") },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                                    focusedLabelColor = MaterialTheme.colorScheme.primary
-                                ),
-                                shape = MaterialTheme.shapes.medium
+                            PlacesAutocompleteTextField(
+                                label = "Hasta",
+                                value = endDisplay,
+                                onValueChange = { endDisplay = it },
+                                onPlaceSelected = { description, lat, lng, placeId ->
+                                    endDisplay = description
+                                    end = description.substringBefore(",").trim()
+                                    endLat = lat
+                                    endLng = lng
+                                    endPlaceId = placeId
+                                },
+                                onClear = { endLat = null; endLng = null; endPlaceId = null; end = ""; endDisplay = "" }
                             )
 
                             Spacer(modifier = Modifier.height(24.dp))
@@ -389,8 +428,8 @@ fun CreateRouteScreen(
 
                             Button(
                                 onClick = {
-                                    if (start.isNotEmpty() && end.isNotEmpty() && selectedDays.isNotEmpty() && 
-                                        availableSeats.isNotEmpty() && price.isNotEmpty()) {
+                                    if (startLat != null && startLng != null && endLat != null && endLng != null &&
+                                        availableSeats.isNotBlank() && price.isNotBlank()) {
                                         viewModel.createRoute(
                                             userId = userId,
                                             carId = car.id,
@@ -405,8 +444,8 @@ fun CreateRouteScreen(
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
-                                enabled = start.isNotEmpty() && end.isNotEmpty() && selectedDays.isNotEmpty() && 
-                                         availableSeats.isNotEmpty() && price.isNotEmpty(),
+                                enabled = startLat != null && startLng != null && endLat != null && endLng != null &&
+                                        availableSeats.isNotBlank() && price.isNotBlank(),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primary,
                                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -644,4 +683,151 @@ private fun validateForm(
             selectedDays.isNotEmpty() &&
             availableSeats.isNotBlank() &&
             price.isNotBlank()
+}
+
+@Composable
+fun PlacesAutocompleteTextField(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    onPlaceSelected: (String, Double, Double, String) -> Unit,
+    onClear: (() -> Unit)? = null
+) {
+    var suggestions by remember { mutableStateOf(listOf<Pair<String, String>>()) } // Pair<description, placeId>
+    var isLoading by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        var textFieldSize by remember { mutableStateOf(androidx.compose.ui.geometry.Size.Zero) }
+        OutlinedTextField(
+            value = value,
+            onValueChange = {
+                println("User typed: $it")
+                onValueChange(it)
+                if (it.length > 2) {
+                    coroutineScope.launch {
+                        isLoading = true
+                        errorMessage = null
+                        val apiKey = context.getString(R.string.google_maps_api_key)
+                        val result = getPlaceSuggestionsWithError(it, apiKey)
+                        println("API returned: $result")
+                        suggestions = result.first
+                        errorMessage = result.second
+                        isLoading = false
+                        expanded = suggestions.isNotEmpty()
+                    }
+                } else {
+                    suggestions = emptyList()
+                    expanded = false
+                    errorMessage = null
+                }
+            },
+            label = { Text(label) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned { coordinates ->
+                    textFieldSize = coordinates.size.toSize()
+                },
+            singleLine = true,
+            isError = errorMessage != null,
+            trailingIcon = {
+                if (value.isNotEmpty()) {
+                    IconButton(onClick = {
+                        onValueChange("")
+                        onClear?.invoke()
+                        suggestions = emptyList()
+                        expanded = false
+                        errorMessage = null
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Borrar campo"
+                        )
+                    }
+                }
+            }
+        )
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.padding(8.dp))
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+        ) {
+            suggestions.forEach { (description, placeId) ->
+                DropdownMenuItem(
+                    text = { Text(description) },
+                    onClick = {
+                        coroutineScope.launch {
+                            val apiKey = context.getString(R.string.google_maps_api_key)
+                            val coords = getPlaceCoordinates(placeId, apiKey)
+                            if (coords != null) {
+                                onPlaceSelected(description, coords.first, coords.second, placeId)
+                                suggestions = emptyList()
+                                expanded = false
+                                errorMessage = null
+                            } else {
+                                errorMessage = "No se pudo obtener la ubicación."
+                            }
+                        }
+                    }
+                )
+            }
+        }
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
+suspend fun getPlaceSuggestionsWithError(query: String, apiKey: String): Pair<List<Pair<String, String>>, String?> {
+    return withContext(Dispatchers.IO) {
+        val url = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input=" +
+                URLEncoder.encode(query, "UTF-8") +
+                "&key=$apiKey&language=es"
+        val conn = URL(url).openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        conn.connectTimeout = 5000
+        conn.readTimeout = 5000
+        val suggestions = mutableListOf<Pair<String, String>>()
+        var error: String? = null
+        try {
+            if (conn.responseCode == 200) {
+                val response = conn.inputStream.bufferedReader().readText()
+                println("Places API response: $response")
+                val json = JSONObject(response)
+                val status = json.optString("status")
+                if (status != "OK") {
+                    error = json.optString("error_message", status)
+                }
+                val predictions = json.optJSONArray("predictions")
+                if (predictions != null) {
+                    for (i in 0 until predictions.length()) {
+                        val item = predictions.getJSONObject(i)
+                        val description = item.getString("description")
+                        val placeId = item.getString("place_id")
+                        suggestions.add(description to placeId)
+                    }
+                }
+            } else {
+                error = "HTTP ${conn.responseCode}"
+            }
+        } catch (e: Exception) {
+            error = "Error: ${e.localizedMessage}"
+            println("Exception in getPlaceSuggestions: $e")
+        } finally {
+            conn.disconnect()
+        }
+        suggestions to error
+    }
 }

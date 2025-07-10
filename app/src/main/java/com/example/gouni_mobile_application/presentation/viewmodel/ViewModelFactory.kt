@@ -22,6 +22,7 @@ import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseC
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.GetRoutePolylineUseCase
 
 class ViewModelFactory(
     private val application: Application,
@@ -43,7 +44,8 @@ class ViewModelFactory(
     private val getUserByIdUseCase: GetUserByIdUseCase,
     private val emailExistsUseCase: EmailExistsUseCase,
     private val updatePasswordByEmailUseCase: UpdatePasswordByEmailUseCase,
-    private val getRouteByIdUseCase: GetRouteByIdUseCase
+    private val getRouteByIdUseCase: GetRouteByIdUseCase,
+    private val getRoutePolylineUseCase: GetRoutePolylineUseCase
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -53,7 +55,7 @@ class ViewModelFactory(
                 AuthViewModel(loginUseCase, registerUseCase, updateUserUseCase, logoutUseCase, getUserByIdUseCase, emailExistsUseCase, updatePasswordByEmailUseCase) as T
             }
             modelClass.isAssignableFrom(RoutesViewModel::class.java) -> {
-                RoutesViewModel(getMyRoutesUseCase, createRouteUseCase, deleteRouteUseCase, application) as T
+                RoutesViewModel(getMyRoutesUseCase, createRouteUseCase, deleteRouteUseCase, getRoutePolylineUseCase, application) as T
             }
             modelClass.isAssignableFrom(ReservationsViewModel::class.java) -> {
                 ReservationsViewModel(getReservationsByRouteUseCase, getReservationsByPassengerUseCase, getReservationsByDriverUseCase) as T

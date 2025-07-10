@@ -22,12 +22,14 @@ import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByPassengerUseCase
 import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByDriverUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.GetRoutePolylineUseCase
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.auth.SignInScreen
 import com.example.gouni_mobile_application.presentation.views.auth.SignUpView
 import com.example.gouni_mobile_application.presentation.views.auth.ForgotPasswordView
 import com.example.gouni_mobile_application.presentation.views.auth.ResetPasswordView
 import com.example.gouni_mobile_application.presentation.views.main.MainView
+import com.example.gouni_mobile_application.data.di.DataModule
 
 @Composable
 fun AppNavigation() {
@@ -40,6 +42,8 @@ fun AppNavigation() {
     val getReservationsByRouteUseCase = GetReservationsByRouteUseCase(application.reservationRepository)
     val getReservationsByPassengerUseCase = GetReservationsByPassengerUseCase(application.reservationRepository)
     val getReservationsByDriverUseCase = GetReservationsByDriverUseCase(application.reservationRepository)
+
+    val getRoutePolylineUseCase = GetRoutePolylineUseCase(DataModule.getMapRepository())
 
     val authViewModelFactory = ViewModelFactory(
         application = application,
@@ -61,7 +65,8 @@ fun AppNavigation() {
         getUserByIdUseCase = GetUserByIdUseCase(application.authRepository),
         emailExistsUseCase = EmailExistsUseCase(application.authRepository),
         updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository),
-        getRouteByIdUseCase = com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase(application.routeRepository)
+        getRouteByIdUseCase = com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase(application.routeRepository),
+        getRoutePolylineUseCase = getRoutePolylineUseCase
     )
 
     NavHost(

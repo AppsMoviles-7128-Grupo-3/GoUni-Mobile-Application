@@ -15,6 +15,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.example.gouni_mobile_application.GoUniApplication
 import com.example.gouni_mobile_application.domain.usecase.auth.LogoutUseCase
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdateUserUseCase
@@ -33,6 +35,7 @@ import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseC
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetRouteByIdUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.GetRoutePolylineUseCase
 import com.example.gouni_mobile_application.presentation.navigation.BottomNavigation
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.car.CarEditView
@@ -47,6 +50,7 @@ import com.example.gouni_mobile_application.presentation.views.routes.RouteDetai
 import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
 import com.example.gouni_mobile_application.presentation.state.UiState
 import com.example.gouni_mobile_application.presentation.viewmodel.PassengerDetailViewModel
+import com.example.gouni_mobile_application.data.di.DataModule
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +63,7 @@ fun MainView(
     val getReservationsByRouteUseCase = GetReservationsByRouteUseCase(application.reservationRepository)
     val getReservationsByPassengerUseCase = GetReservationsByPassengerUseCase(application.reservationRepository)
     val getReservationsByDriverUseCase = GetReservationsByDriverUseCase(application.reservationRepository)
+    val getRoutePolylineUseCase = GetRoutePolylineUseCase(DataModule.getMapRepository())
 
     val viewModelFactory = ViewModelFactory(
         application = application,
@@ -80,7 +85,8 @@ fun MainView(
         getUserByIdUseCase = GetUserByIdUseCase(application.authRepository),
         emailExistsUseCase = EmailExistsUseCase(application.authRepository),
         updatePasswordByEmailUseCase = UpdatePasswordByEmailUseCase(application.authRepository),
-        getRouteByIdUseCase = GetRouteByIdUseCase(application.routeRepository)
+        getRouteByIdUseCase = GetRouteByIdUseCase(application.routeRepository),
+        getRoutePolylineUseCase = getRoutePolylineUseCase
     )
 
     val authViewModel: com.example.gouni_mobile_application.presentation.viewmodel.AuthViewModel = viewModel(factory = viewModelFactory)
@@ -162,7 +168,8 @@ fun MainView(
                     },
                     onNavigateBack = {
                         navController.popBackStack()
-                    }
+                    },
+                    navController = navController
                 )
             }
             composable("reservations") {
@@ -262,17 +269,28 @@ fun MainView(
                     }
                 }
             }
-            composable("route_detail") {
+            composable("route_detail?startLat={startLat}&startLng={startLng}&endLat={endLat}&endLng={endLng}",
+                arguments = listOf(
+                    navArgument("startLat") { nullable = true; type = NavType.StringType },
+                    navArgument("startLng") { nullable = true; type = NavType.StringType },
+                    navArgument("endLat") { nullable = true; type = NavType.StringType },
+                    navArgument("endLng") { nullable = true; type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val startLat = backStackEntry.arguments?.getString("startLat")?.toDoubleOrNull()
+                val startLng = backStackEntry.arguments?.getString("startLng")?.toDoubleOrNull()
+                val endLat = backStackEntry.arguments?.getString("endLat")?.toDoubleOrNull()
+                val endLng = backStackEntry.arguments?.getString("endLng")?.toDoubleOrNull()
                 selectedRoute?.let { route ->
                     RouteDetailView(
                         route = route,
                         viewModelFactory = viewModelFactory,
-                        onNavigateBack = {
-                            navController.popBackStack()
-                        },
-                        onNavigateToReservations = { routeId ->
-                            navController.navigate("reservations")
-                        }
+                        onNavigateBack = { navController.popBackStack() },
+                        onNavigateToReservations = { navController.navigate("reservations") },
+                        startLat = startLat,
+                        startLng = startLng,
+                        endLat = endLat,
+                        endLng = endLng
                     )
                 }
             }

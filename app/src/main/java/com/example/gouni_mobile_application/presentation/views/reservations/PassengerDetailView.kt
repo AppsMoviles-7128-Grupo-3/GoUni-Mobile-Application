@@ -122,7 +122,7 @@ fun PassengerDetailView(
                         else -> {}
                     }
                     Text(
-                        text = "Reserva #${reservation.id}",
+                        text = "Reserva ${reservation.id}",
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         textAlign = TextAlign.Center
                     )

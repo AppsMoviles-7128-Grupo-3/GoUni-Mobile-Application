@@ -10,6 +10,8 @@ import com.example.gouni_mobile_application.domain.model.Route
 import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
+import com.example.gouni_mobile_application.domain.usecase.route.GetRoutePolylineUseCase
+import com.example.gouni_mobile_application.data.remote.api.Location
 import com.example.gouni_mobile_application.presentation.state.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ class RoutesViewModel(
     private val getMyRoutesUseCase: GetMyRoutesUseCase,
     private val createRouteUseCase: CreateRouteUseCase,
     private val deleteRouteUseCase: DeleteRouteUseCase,
+    private val getRoutePolylineUseCase: GetRoutePolylineUseCase,
     private val application: Application
 ) : AndroidViewModel(application) {
 
@@ -32,6 +35,9 @@ class RoutesViewModel(
 
     private val _deleteRouteState = MutableStateFlow<UiState<Unit>?>(null)
     val deleteRouteState: StateFlow<UiState<Unit>?> = _deleteRouteState
+
+    private val _mapState = MutableStateFlow<MapUiState>(MapUiState.Idle)
+    val mapState: StateFlow<MapUiState> = _mapState
 
     fun loadRoutes(userId: String) {
         viewModelScope.launch {
@@ -116,5 +122,49 @@ class RoutesViewModel(
 
     fun resetDeleteRouteState() {
         _deleteRouteState.value = null
+    }
+
+    fun loadRouteMap(start: String, end: String) {
+        viewModelScope.launch {
+            _mapState.value = MapUiState.Loading
+            try {
+                val startLoc = getRoutePolylineUseCase.getCoordinates(start)
+                val endLoc = getRoutePolylineUseCase.getCoordinates(end)
+                if (startLoc != null && endLoc != null) {
+                    val polyline = getRoutePolylineUseCase.getRoutePolyline(startLoc, endLoc)
+                    if (polyline != null) {
+                        _mapState.value = MapUiState.Success(startLoc, endLoc, polyline)
+                    } else {
+                        _mapState.value = MapUiState.Error("No se pudo obtener la ruta.")
+                    }
+                } else {
+                    _mapState.value = MapUiState.Error("No se pudieron geocodificar las ubicaciones.")
+                }
+            } catch (e: Exception) {
+                _mapState.value = MapUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun setMapCoordinates(startLat: Double, startLng: Double, endLat: Double, endLng: Double) {
+        val startLoc = Location(startLat, startLng)
+        val endLoc = Location(endLat, endLng)
+        viewModelScope.launch {
+            _mapState.value = MapUiState.Loading
+            try {
+                val polyline = getRoutePolylineUseCase.getRoutePolyline(startLoc, endLoc)
+                if (polyline != null) {
+                    _mapState.value = MapUiState.Success(startLoc, endLoc, polyline)
+                } else {
+                    _mapState.value = MapUiState.Error("No se pudo obtener la ruta.")
+                }
+            } catch (e: Exception) {
+                _mapState.value = MapUiState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+    fun setMapError(message: String) {
+        _mapState.value = MapUiState.Error(message)
     }
 }

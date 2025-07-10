@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">gouni_mobile_application</string>
+    <string name="google_maps_key">YOUR_API_KEY_WILL_BE_INJECTED_BY_GRADLE</string>
+    <string name="google_maps_api_key">AIzaSyD1UQMOqt-4e-Pv1Usx9ava01Nz_roV24o</string>
 </resources>
