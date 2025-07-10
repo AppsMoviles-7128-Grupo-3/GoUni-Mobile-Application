@@ -16,8 +16,12 @@ import com.example.gouni_mobile_application.domain.usecase.auth.EmailExistsUseCa
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdatePasswordByEmailUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.GetCarByIdUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByRouteUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByPassengerUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByDriverUseCase
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import com.example.gouni_mobile_application.presentation.views.auth.SignInScreen
 import com.example.gouni_mobile_application.presentation.views.auth.SignUpView
@@ -33,6 +37,10 @@ fun AppNavigation() {
     val context = LocalContext.current
     val application = context.applicationContext as GoUniApplication
 
+    val getReservationsByRouteUseCase = GetReservationsByRouteUseCase(application.reservationRepository)
+    val getReservationsByPassengerUseCase = GetReservationsByPassengerUseCase(application.reservationRepository)
+    val getReservationsByDriverUseCase = GetReservationsByDriverUseCase(application.reservationRepository)
+
     val authViewModelFactory = ViewModelFactory(
         application = application,
         loginUseCase = LoginUseCase(application.authRepository),
@@ -42,8 +50,11 @@ fun AppNavigation() {
         getMyRoutesUseCase = com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase(application.routeRepository),
         createRouteUseCase = com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase(application.routeRepository),
         deleteRouteUseCase = com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase(application.routeRepository),
-        getReservationsUseCase = com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsUseCase(application.reservationRepository),
+        getReservationsByRouteUseCase = getReservationsByRouteUseCase,
+        getReservationsByPassengerUseCase = getReservationsByPassengerUseCase,
+        getReservationsByDriverUseCase = getReservationsByDriverUseCase,
         getCarUseCase = GetCarUseCase(application.carRepository),
+        getCarByIdUseCase = application.getCarByIdUseCase,
         insertCarUseCase = InsertCarUseCase(application.carRepository),
         hasCarUseCase = HasCarUseCase(application.carRepository),
         deleteCarUseCase = DeleteCarUseCase(application.carRepository),

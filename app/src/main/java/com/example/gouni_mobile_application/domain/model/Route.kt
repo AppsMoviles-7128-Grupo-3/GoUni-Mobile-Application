@@ -5,7 +5,7 @@ import java.time.LocalTime
 
 data class Route(
     val id: String = "",
-    val driverId: String,
+    val userId: String,
     val carId: String,
     val start: String,
     val end: String,

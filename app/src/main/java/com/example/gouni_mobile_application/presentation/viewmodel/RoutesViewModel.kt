@@ -33,10 +33,10 @@ class RoutesViewModel(
     private val _deleteRouteState = MutableStateFlow<UiState<Unit>?>(null)
     val deleteRouteState: StateFlow<UiState<Unit>?> = _deleteRouteState
 
-    fun loadRoutes(driverId: String) {
+    fun loadRoutes(userId: String) {
         viewModelScope.launch {
             try {
-                getMyRoutesUseCase(driverId).collect { routes ->
+                getMyRoutesUseCase(userId).collect { routes ->
                     _routesState.value = UiState.Success(routes)
                 }
             } catch (e: Exception) {
@@ -46,7 +46,7 @@ class RoutesViewModel(
     }
 
     fun createRoute(
-        driverId: String,
+        userId: String,
         carId: String,
         start: String,
         end: String,
@@ -61,7 +61,7 @@ class RoutesViewModel(
             _createRouteState.value = UiState.Loading
             try {
                 val route = Route(
-                    driverId = driverId,
+                    userId = userId,
                     carId = carId,
                     start = start,
                     end = end,
@@ -77,7 +77,7 @@ class RoutesViewModel(
                         Log.d("RoutesViewModel", "Route created with id: $routeId")
                         Toast.makeText(getApplication(), "Ruta creada con éxito", Toast.LENGTH_SHORT).show()
                         _createRouteState.value = UiState.Success(routeId)
-                        loadRoutes(driverId)
+                        loadRoutes(userId)
                     }
                     .onFailure { error ->
                         Log.e("RoutesViewModel", "Failed to create route: ${error.message}")
@@ -92,14 +92,14 @@ class RoutesViewModel(
         }
     }
 
-    fun deleteRoute(routeId: String, driverId: String) {
+    fun deleteRoute(routeId: String, userId: String) {
         viewModelScope.launch {
             _deleteRouteState.value = UiState.Loading
             try {
                 deleteRouteUseCase(routeId)
                     .onSuccess {
                         _deleteRouteState.value = UiState.Success(Unit)
-                        loadRoutes(driverId)
+                        loadRoutes(userId)
                     }
                     .onFailure { error ->
                         _deleteRouteState.value = UiState.Error(error.message ?: "Failed to delete route")

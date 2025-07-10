@@ -392,7 +392,7 @@ fun CreateRouteScreen(
                                     if (start.isNotEmpty() && end.isNotEmpty() && selectedDays.isNotEmpty() && 
                                         availableSeats.isNotEmpty() && price.isNotEmpty()) {
                                         viewModel.createRoute(
-                                            driverId = userId,
+                                            userId = userId,
                                             carId = car.id,
                                             start = start,
                                             end = end,

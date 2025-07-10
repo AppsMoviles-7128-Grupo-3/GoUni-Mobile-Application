@@ -12,9 +12,12 @@ import com.example.gouni_mobile_application.domain.usecase.auth.GetUserByIdUseCa
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdatePasswordByEmailUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.GetCarByIdUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
-import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByRouteUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByPassengerUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByDriverUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
@@ -29,8 +32,11 @@ class ViewModelFactory(
     private val getMyRoutesUseCase: GetMyRoutesUseCase,
     private val createRouteUseCase: CreateRouteUseCase,
     private val deleteRouteUseCase: DeleteRouteUseCase,
-    private val getReservationsUseCase: GetReservationsUseCase,
+    private val getReservationsByRouteUseCase: GetReservationsByRouteUseCase,
+    private val getReservationsByPassengerUseCase: GetReservationsByPassengerUseCase,
+    private val getReservationsByDriverUseCase: GetReservationsByDriverUseCase,
     private val getCarUseCase: GetCarUseCase,
+    private val getCarByIdUseCase: GetCarByIdUseCase,
     private val insertCarUseCase: InsertCarUseCase,
     private val hasCarUseCase: HasCarUseCase,
     private val deleteCarUseCase: DeleteCarUseCase,
@@ -50,13 +56,13 @@ class ViewModelFactory(
                 RoutesViewModel(getMyRoutesUseCase, createRouteUseCase, deleteRouteUseCase, application) as T
             }
             modelClass.isAssignableFrom(ReservationsViewModel::class.java) -> {
-                ReservationsViewModel(getReservationsUseCase) as T
+                ReservationsViewModel(getReservationsByRouteUseCase, getReservationsByPassengerUseCase, getReservationsByDriverUseCase) as T
             }
             modelClass.isAssignableFrom(CarViewModel::class.java) -> {
-                CarViewModel(getCarUseCase, insertCarUseCase, hasCarUseCase, deleteCarUseCase) as T
+                CarViewModel(getCarUseCase, getCarByIdUseCase, insertCarUseCase, hasCarUseCase, deleteCarUseCase) as T
             }
             modelClass.isAssignableFrom(PassengerDetailViewModel::class.java) -> {
-                PassengerDetailViewModel(getRouteByIdUseCase) as T
+                PassengerDetailViewModel(getRouteByIdUseCase, getUserByIdUseCase) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

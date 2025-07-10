@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.gouni_mobile_application.domain.model.Car
 import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.GetCarByIdUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
 import com.example.gouni_mobile_application.presentation.state.UiState
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 
 class CarViewModel(
     private val getCarUseCase: GetCarUseCase,
+    private val getCarByIdUseCase: GetCarByIdUseCase,
     private val insertCarUseCase: InsertCarUseCase,
     private val hasCarUseCase: HasCarUseCase,
     private val deleteCarUseCase: DeleteCarUseCase
@@ -22,6 +24,9 @@ class CarViewModel(
 
     private val _carState = MutableStateFlow<UiState<Car?>>(UiState.Loading)
     val carState: StateFlow<UiState<Car?>> = _carState.asStateFlow()
+
+    private val _carByIdState = MutableStateFlow<UiState<Car?>>(UiState.Loading)
+    val carByIdState: StateFlow<UiState<Car?>> = _carByIdState.asStateFlow()
 
     private val _hasCarState = MutableStateFlow<UiState<Boolean>>(UiState.Loading)
     val hasCarState: StateFlow<UiState<Boolean>> = _hasCarState.asStateFlow()
@@ -40,6 +45,19 @@ class CarViewModel(
                 }
             } catch (e: Exception) {
                 _carState.value = UiState.Error(e.message ?: "Error loading car")
+            }
+        }
+    }
+
+    fun getCarById(id: String) {
+        viewModelScope.launch {
+            try {
+                _carByIdState.value = UiState.Loading
+                getCarByIdUseCase(id).collect { car ->
+                    _carByIdState.value = UiState.Success(car)
+                }
+            } catch (e: Exception) {
+                _carByIdState.value = UiState.Error(e.message ?: "Error loading car")
             }
         }
     }

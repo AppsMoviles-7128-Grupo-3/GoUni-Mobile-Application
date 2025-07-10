@@ -12,8 +12,8 @@ interface RouteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRoute(route: RouteEntity)
 
-    @Query("SELECT * FROM routes WHERE driverId = :driverId")
-    fun getRoutesByDriver(driverId: String): Flow<List<RouteEntity>>
+    @Query("SELECT * FROM routes WHERE userId = :userId")
+    fun getRoutesByUser(userId: String): Flow<List<RouteEntity>>
 
     @Query("DELETE FROM routes WHERE id = :routeId")
     suspend fun deleteRoute(routeId: String)

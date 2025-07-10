@@ -10,7 +10,7 @@ import java.time.LocalTime
 @RequiresApi(Build.VERSION_CODES.O)
 fun RouteEntity.toDomain(): Route = Route(
     id = id,
-    driverId = driverId,
+    userId = userId,
     carId = carId,
     start = start,
     end = end,
@@ -23,7 +23,7 @@ fun RouteEntity.toDomain(): Route = Route(
 
 fun Route.toEntity(): RouteEntity = RouteEntity(
     id = if (id.isEmpty()) java.util.UUID.randomUUID().toString() else id,
-    driverId = driverId,
+    userId = userId,
     carId = carId,
     start = start,
     end = end,

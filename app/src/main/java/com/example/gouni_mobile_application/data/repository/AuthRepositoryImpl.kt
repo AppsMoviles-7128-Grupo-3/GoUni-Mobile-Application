@@ -83,7 +83,7 @@ class AuthRepositoryImpl(
         if (response.isSuccessful) {
             val responseBody = response.body()
             val message = responseBody?.string() ?: ""
-            message.contains("Password reset link sent")
+            message.contains("Correo enviado a")
         } else {
             false
         }
@@ -94,7 +94,7 @@ class AuthRepositoryImpl(
         if (response.isSuccessful) {
             val responseBody = response.body()
             val message = responseBody?.string() ?: ""
-            if (message.contains("Password updated successfully")) {
+            if (message.contains("Contraseña actualizada correctamente")) {
                 Result.success(Unit)
             } else {
                 Result.failure(Exception(message.ifEmpty { "Unknown error" }))

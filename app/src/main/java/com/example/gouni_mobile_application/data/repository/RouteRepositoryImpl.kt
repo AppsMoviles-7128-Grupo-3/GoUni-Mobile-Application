@@ -12,10 +12,10 @@ import kotlinx.coroutines.withContext
 class RouteRepositoryImpl(
     private val routeApi: RouteApi
 ) : RouteRepository {
-    override fun getMyRoutes(driverId: String): Flow<List<Route>> = flow {
-        val response = routeApi.getByDriverId(driverId.toLong())
+    override fun getMyRoutes(userId: String): Flow<List<Route>> = flow {
+        val response = routeApi.getByUserId(userId.toLong())
         if (response.isSuccessful) {
-            emit(response.body()?.map { it.toDomain() } ?: emptyList())
+            emit(response.body()?.map { dto -> dto.toDomain() } ?: emptyList())
         } else {
             emit(emptyList())
         }
@@ -54,7 +54,7 @@ class RouteRepositoryImpl(
 // Extension functions for mapping
 private fun RouteDto.toDomain() = Route(
     id = id?.toString() ?: "",
-    driverId = driverId.toString(),
+    userId = userId.toString(),
     carId = carId.toString(),
     start = start,
     end = end,
@@ -67,7 +67,7 @@ private fun RouteDto.toDomain() = Route(
 
 private fun Route.toDto() = RouteDto(
     id = id.toLongOrNull(),
-    driverId = driverId.toLong(),
+    userId = userId.toLong(),
     carId = carId.toLong(),
     start = start,
     end = end,

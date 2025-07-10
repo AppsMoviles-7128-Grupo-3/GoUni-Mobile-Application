@@ -22,6 +22,15 @@ class CarRepositoryImpl(
         }
     }
 
+    override fun getCarById(id: String): Flow<Car?> = flow {
+        val response = carApi.getById(id.toLong())
+        if (response.isSuccessful) {
+            emit(response.body()?.toDomain())
+        } else {
+            emit(null)
+        }
+    }
+
     override suspend fun insertCar(car: Car) {
         carApi.create(car.toDto())
     }

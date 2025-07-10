@@ -4,7 +4,7 @@ import java.time.LocalTime
 
 data class RouteDto(
     val id: Long? = null,
-    val driverId: Long,
+    val userId: Long,
     val carId: Long,
     val start: String,
     val end: String,

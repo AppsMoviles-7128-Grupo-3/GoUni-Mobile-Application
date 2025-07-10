@@ -7,11 +7,5 @@ import androidx.room.PrimaryKey
 data class ReservationEntity(
     @PrimaryKey val id: String,
     val routeId: String,
-    val studentName: String,
-    val age: Int,
-    val meetingPlace: String,
-    val universityId: String,
-    val universityName: String = "",
-    val profilePhoto: String?,
-    val status: String
+    val passengerId: String
 )

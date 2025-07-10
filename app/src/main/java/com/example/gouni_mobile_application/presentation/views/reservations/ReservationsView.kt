@@ -19,31 +19,39 @@ import androidx.compose.ui.unit.dp
 import com.example.gouni_mobile_application.domain.model.StudentReservation
 import com.example.gouni_mobile_application.presentation.state.UiState
 import com.example.gouni_mobile_application.presentation.viewmodel.ReservationsViewModel
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun ReservationsScreen(
-    userId: String,
     viewModel: ReservationsViewModel,
     onReservationClick: (StudentReservation) -> Unit = {}
 ) {
     val reservationsState by viewModel.reservationsState.collectAsState()
-
-    LaunchedEffect(userId) {
-        viewModel.loadReservations(userId)
-    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "Reservaciones",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.SemiBold
-            ),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(bottom = 24.dp)
-        )
+        ) {
+            Icon(
+                Icons.Default.People,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(28.dp)
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = "Reservaciones",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.SemiBold
+                )
+            )
+        }
 
         when (val currentState = reservationsState) {
             is UiState.Idle -> Box(
@@ -59,13 +67,18 @@ fun ReservationsScreen(
                 CircularProgressIndicator()
             }
             is UiState.Success -> if (currentState.data.isEmpty()) {
-                EmptyReservationsCard()
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No hay reservaciones.")
+                }
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(currentState.data) { reservation ->
-                        ClickableReservationCard(
+                        ModernReservationCard(
                             reservation = reservation,
                             onClick = { onReservationClick(reservation) }
                         )
@@ -75,8 +88,6 @@ fun ReservationsScreen(
             is UiState.Error -> {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                    shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer
                     )
@@ -105,7 +116,7 @@ fun ReservationsScreen(
 }
 
 @Composable
-fun ClickableReservationCard(
+fun ModernReservationCard(
     reservation: StudentReservation,
     onClick: () -> Unit
 ) {
@@ -113,127 +124,55 @@ fun ClickableReservationCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape),
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
                 contentAlignment = Alignment.Center
             ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                    shape = CircleShape
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = reservation.studentName.first().toString().uppercase(),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        )
-                    }
-                }
+                Text(
+                    text = reservation.passengerId.take(2).uppercase(),
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                )
             }
-
             Spacer(modifier = Modifier.width(16.dp))
-
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = reservation.studentName,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = "Reserva #${reservation.id}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
                 )
-                
                 Spacer(modifier = Modifier.height(4.dp))
-                
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.Badge,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = reservation.universityId,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(2.dp))
-                
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        Icons.Default.School,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = reservation.universityName.ifEmpty { "Universidad no especificada" },
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            Column(
-                horizontalAlignment = Alignment.End
-            ) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = when (reservation.status) {
-                            com.example.gouni_mobile_application.domain.model.ReservationStatus.PENDING -> MaterialTheme.colorScheme.primary
-                            com.example.gouni_mobile_application.domain.model.ReservationStatus.ACCEPTED -> MaterialTheme.colorScheme.tertiary
-                            com.example.gouni_mobile_application.domain.model.ReservationStatus.REJECTED -> MaterialTheme.colorScheme.error
-                        }
-                    ),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(
-                        text = when (reservation.status) {
-                            com.example.gouni_mobile_application.domain.model.ReservationStatus.PENDING -> "PENDIENTE"
-                            com.example.gouni_mobile_application.domain.model.ReservationStatus.ACCEPTED -> "ACEPTADO"
-                            com.example.gouni_mobile_application.domain.model.ReservationStatus.REJECTED -> "RECHAZADO"
-                        },
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Icon(
-                    Icons.Default.ChevronRight,
-                    contentDescription = "Ver detalles",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(20.dp)
+                Text(
+                    text = "Ruta: ${reservation.routeId}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Pasajero: ${reservation.passengerId}",
+                    style = MaterialTheme.typography.bodySmall
                 )
             }
+            Icon(
+                Icons.Default.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }

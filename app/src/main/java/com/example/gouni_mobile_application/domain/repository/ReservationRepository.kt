@@ -4,6 +4,8 @@ import com.example.gouni_mobile_application.domain.model.StudentReservation
 import kotlinx.coroutines.flow.Flow
 
 interface ReservationRepository {
-    fun getReservations(driverId: String): Flow<List<StudentReservation>>
-    suspend fun updateReservationStatus(reservationId: String, status: com.example.gouni_mobile_application.domain.model.ReservationStatus): Result<Unit>
+    fun getReservationsByRoute(routeId: String): Flow<List<StudentReservation>>
+    fun getReservationsByPassenger(passengerId: String): Flow<List<StudentReservation>>
+    suspend fun createReservation(reservation: StudentReservation)
+    fun getReservationsByDriver(driverId: String): Flow<List<StudentReservation>>
 }

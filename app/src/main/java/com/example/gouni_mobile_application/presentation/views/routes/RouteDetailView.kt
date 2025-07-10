@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -22,8 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gouni_mobile_application.domain.model.Route
 import com.example.gouni_mobile_application.domain.model.StudentReservation
+import com.example.gouni_mobile_application.domain.model.Car
 import com.example.gouni_mobile_application.presentation.state.UiState
 import com.example.gouni_mobile_application.presentation.viewmodel.ReservationsViewModel
+import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
 import com.example.gouni_mobile_application.presentation.viewmodel.ViewModelFactory
 import java.time.format.DateTimeFormatter
 
@@ -36,10 +39,13 @@ fun RouteDetailView(
     onNavigateToReservations: (String) -> Unit
 ) {
     val reservationsViewModel: ReservationsViewModel = viewModel(factory = viewModelFactory)
+    val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
     val reservationsState by reservationsViewModel.reservationsState.collectAsState()
+    val carState by carViewModel.carByIdState.collectAsState()
 
     LaunchedEffect(route.id) {
-        reservationsViewModel.loadReservations(route.driverId)
+        reservationsViewModel.loadReservationsByRoute(route.id)
+        carViewModel.getCarById(route.carId)
     }
 
     Scaffold(
@@ -128,7 +134,7 @@ fun RouteDetailView(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    Icons.Default.ArrowForward,
+                                    Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(20.dp)
@@ -201,6 +207,198 @@ fun RouteDetailView(
                                         fontWeight = FontWeight.Medium
                                     )
                                 )
+                            }
+                        }
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.secondary.copy(alpha = 0.08f),
+                                        CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    Icons.Default.DirectionsCar,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.secondary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                text = "Vehículo",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        when (val currentCarState = carState) {
+                            is UiState.Loading -> {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                }
+                            }
+                            is UiState.Success -> {
+                                val car = currentCarState.data
+                                if (car != null) {
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Column(
+                                                horizontalAlignment = Alignment.Start
+                                            ) {
+                                                Text(
+                                                    text = "Marca y Modelo",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = "${car.make} ${car.model}",
+                                                    style = MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.Medium
+                                                    )
+                                                )
+                                            }
+                                            
+                                            Column(
+                                                horizontalAlignment = Alignment.End
+                                            ) {
+                                                Text(
+                                                    text = "Color",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = car.color,
+                                                    style = MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.Medium
+                                                    )
+                                                )
+                                            }
+                                        }
+                                        
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Column(
+                                                horizontalAlignment = Alignment.Start
+                                            ) {
+                                                Text(
+                                                    text = "Placa",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = car.licensePlate,
+                                                    style = MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.Medium
+                                                    ),
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                            
+                                            Column(
+                                                horizontalAlignment = Alignment.End
+                                            ) {
+                                                Text(
+                                                    text = "Año",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Text(
+                                                    text = car.year.toString(),
+                                                    style = MaterialTheme.typography.titleMedium.copy(
+                                                        fontWeight = FontWeight.Medium
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Icon(
+                                                Icons.Default.DirectionsCar,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                modifier = Modifier.size(48.dp)
+                                            )
+                                            Spacer(modifier = Modifier.height(8.dp))
+                                            Text(
+                                                text = "Información del vehículo no disponible",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            is UiState.Error -> {
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer
+                                    ),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text(
+                                        text = "Error al cargar información del vehículo: ${currentCarState.message}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+                            }
+                            else -> {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "Cargando información del vehículo...",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
                         }
                     }
@@ -447,7 +645,7 @@ fun PassengerPreviewCard(reservation: StudentReservation) {
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = reservation.studentName.first().toString().uppercase(),
+                    text = reservation.passengerId.take(2).uppercase(),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.primary
@@ -459,40 +657,16 @@ fun PassengerPreviewCard(reservation: StudentReservation) {
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = reservation.studentName,
+                    text = "Pasajero: ${reservation.passengerId}",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Medium
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = reservation.universityId,
+                    text = "Reserva: ${reservation.id}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = when (reservation.status) {
-                        com.example.gouni_mobile_application.domain.model.ReservationStatus.PENDING -> MaterialTheme.colorScheme.primary
-                        com.example.gouni_mobile_application.domain.model.ReservationStatus.ACCEPTED -> MaterialTheme.colorScheme.tertiary
-                        com.example.gouni_mobile_application.domain.model.ReservationStatus.REJECTED -> MaterialTheme.colorScheme.error
-                    }
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = when (reservation.status) {
-                        com.example.gouni_mobile_application.domain.model.ReservationStatus.PENDING -> "PENDIENTE"
-                        com.example.gouni_mobile_application.domain.model.ReservationStatus.ACCEPTED -> "ACEPTADO"
-                        com.example.gouni_mobile_application.domain.model.ReservationStatus.REJECTED -> "RECHAZADO"
-                    },
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
         }

@@ -11,6 +11,6 @@ interface ReservationDao {
     @Insert
     suspend fun insertReservation(reservation: ReservationEntity)
 
-    @Query("SELECT * FROM reservations WHERE routeId IN (SELECT id FROM routes WHERE driverId = :driverId)")
-    fun getReservationsByDriver(driverId: String): Flow<List<ReservationEntity>>
+    @Query("SELECT * FROM reservations WHERE routeId IN (SELECT id FROM routes WHERE userId = :userId)")
+    fun getReservationsByUser(userId: String): Flow<List<ReservationEntity>>
 }

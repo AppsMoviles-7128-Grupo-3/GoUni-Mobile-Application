@@ -23,9 +23,12 @@ import com.example.gouni_mobile_application.domain.usecase.auth.EmailExistsUseCa
 import com.example.gouni_mobile_application.domain.usecase.auth.UpdatePasswordByEmailUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.DeleteCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.GetCarUseCase
+import com.example.gouni_mobile_application.domain.usecase.car.GetCarByIdUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.HasCarUseCase
 import com.example.gouni_mobile_application.domain.usecase.car.InsertCarUseCase
-import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByRouteUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByPassengerUseCase
+import com.example.gouni_mobile_application.domain.usecase.reservation.GetReservationsByDriverUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.CreateRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.DeleteRouteUseCase
 import com.example.gouni_mobile_application.domain.usecase.route.GetMyRoutesUseCase
@@ -43,6 +46,7 @@ import com.example.gouni_mobile_application.presentation.views.routes.MyRoutesVi
 import com.example.gouni_mobile_application.presentation.views.routes.RouteDetailView
 import com.example.gouni_mobile_application.presentation.viewmodel.CarViewModel
 import com.example.gouni_mobile_application.presentation.state.UiState
+import com.example.gouni_mobile_application.presentation.viewmodel.PassengerDetailViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +56,10 @@ fun MainView(
     application: GoUniApplication,
     onLogout: () -> Unit
 ) {
+    val getReservationsByRouteUseCase = GetReservationsByRouteUseCase(application.reservationRepository)
+    val getReservationsByPassengerUseCase = GetReservationsByPassengerUseCase(application.reservationRepository)
+    val getReservationsByDriverUseCase = GetReservationsByDriverUseCase(application.reservationRepository)
+
     val viewModelFactory = ViewModelFactory(
         application = application,
         loginUseCase = com.example.gouni_mobile_application.domain.usecase.auth.LoginUseCase(application.authRepository),
@@ -61,8 +69,11 @@ fun MainView(
         getMyRoutesUseCase = GetMyRoutesUseCase(application.routeRepository),
         createRouteUseCase = CreateRouteUseCase(application.routeRepository),
         deleteRouteUseCase = DeleteRouteUseCase(application.routeRepository),
-        getReservationsUseCase = GetReservationsUseCase(application.reservationRepository),
+        getReservationsByRouteUseCase = getReservationsByRouteUseCase,
+        getReservationsByPassengerUseCase = getReservationsByPassengerUseCase,
+        getReservationsByDriverUseCase = getReservationsByDriverUseCase,
         getCarUseCase = GetCarUseCase(application.carRepository),
+        getCarByIdUseCase = application.getCarByIdUseCase,
         insertCarUseCase = InsertCarUseCase(application.carRepository),
         hasCarUseCase = HasCarUseCase(application.carRepository),
         deleteCarUseCase = DeleteCarUseCase(application.carRepository),
@@ -155,9 +166,12 @@ fun MainView(
                 )
             }
             composable("reservations") {
+                val reservationsViewModel: com.example.gouni_mobile_application.presentation.viewmodel.ReservationsViewModel = viewModel(factory = viewModelFactory)
+                LaunchedEffect(userId) {
+                    reservationsViewModel.loadReservationsByDriver(userId)
+                }
                 ReservationsScreen(
-                    userId = userId,
-                    viewModel = viewModel(factory = viewModelFactory),
+                    viewModel = reservationsViewModel,
                     onReservationClick = { reservation ->
                         selectedReservation = reservation
                         navController.navigate("passenger_detail")
@@ -212,18 +226,18 @@ fun MainView(
             }
             composable("car_edit") {
                 val carViewModel: CarViewModel = viewModel(factory = viewModelFactory)
-                val carState by carViewModel.carState.collectAsState()
-
+                val carState: UiState<com.example.gouni_mobile_application.domain.model.Car?> by carViewModel.carState.collectAsState()
                 LaunchedEffect(userId) {
                     carViewModel.getCar(userId)
                 }
-
-                when (val currentCarState = carState) {
+                when (carState) {
                     is UiState.Success -> {
-                        currentCarState.data?.let { car ->
+                        val car = (carState as UiState.Success<com.example.gouni_mobile_application.domain.model.Car?>).data
+                        if (car != null) {
                             CarEditView(
                                 car = car,
-                                onCarUpdated = { updatedCar ->
+                                onCarUpdated = {
+                                    carViewModel.getCar(userId)
                                     navController.popBackStack()
                                 },
                                 onNavigateBack = {
@@ -231,23 +245,20 @@ fun MainView(
                                 },
                                 viewModelFactory = viewModelFactory
                             )
-                        } ?: run {
-                            navController.popBackStack()
+                        } else {
+                            Text("No car found for this user.")
                         }
                     }
-                    is UiState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
+                    is UiState.Loading, UiState.Idle -> {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
                     }
                     is UiState.Error -> {
-                        navController.popBackStack()
-                    }
-                    else -> {
-                        navController.popBackStack()
+                        val message = (carState as UiState.Error).message
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("Error loading car: $message")
+                        }
                     }
                 }
             }
@@ -263,21 +274,21 @@ fun MainView(
                             navController.navigate("reservations")
                         }
                     )
-                } ?: run {
-                    navController.popBackStack()
                 }
             }
             composable("passenger_detail") {
                 selectedReservation?.let { reservation ->
+                    val passengerDetailViewModel: PassengerDetailViewModel = viewModel(factory = viewModelFactory)
                     PassengerDetailView(
                         reservation = reservation,
-                        viewModelFactory = viewModelFactory,
                         onNavigateBack = {
                             navController.popBackStack()
+                        },
+                        viewModel = passengerDetailViewModel,
+                        onNavigateToMyRoutes = {
+                            navController.navigate("my_routes")
                         }
                     )
-                } ?: run {
-                    navController.popBackStack()
                 }
             }
         }

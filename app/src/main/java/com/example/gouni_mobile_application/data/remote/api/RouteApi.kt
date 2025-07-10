@@ -22,4 +22,7 @@ interface RouteApi {
 
     @GET("api/routes/driver/{driverId}")
     suspend fun getByDriverId(@Path("driverId") driverId: Long): Response<List<RouteDto>>
+
+    @GET("api/routes/user/{userId}")
+    suspend fun getByUserId(@Path("userId") userId: Long): Response<List<RouteDto>>
 } 

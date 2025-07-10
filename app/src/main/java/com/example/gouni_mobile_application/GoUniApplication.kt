@@ -5,6 +5,7 @@ import com.example.gouni_mobile_application.domain.repository.AuthRepository
 import com.example.gouni_mobile_application.domain.repository.CarRepository
 import com.example.gouni_mobile_application.domain.repository.ReservationRepository
 import com.example.gouni_mobile_application.domain.repository.RouteRepository
+import com.example.gouni_mobile_application.domain.usecase.car.GetCarByIdUseCase
 import com.example.gouni_mobile_application.data.di.DataModule
 
 class GoUniApplication : Application() {
@@ -23,5 +24,9 @@ class GoUniApplication : Application() {
 
     val carRepository: CarRepository by lazy {
         DataModule.getCarRepository()
+    }
+
+    val getCarByIdUseCase: GetCarByIdUseCase by lazy {
+        GetCarByIdUseCase(carRepository)
     }
 }
