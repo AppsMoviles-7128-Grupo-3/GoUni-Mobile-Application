@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "95028131217",
+    "project_id": "gouni-driverapp",
+    "storage_bucket": "gouni-driverapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:95028131217:android:fd181812093d1a17e09630",
+        "android_client_info": {
+          "package_name": "com.example.gouni_mobile_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNr2t0orHMksoq55qtu6KrymXYJhXSJDA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

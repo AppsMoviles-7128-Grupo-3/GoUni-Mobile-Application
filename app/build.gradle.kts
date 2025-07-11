@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    //id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -56,6 +58,9 @@ dependencies {
 
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended")
+
+    // Firebase Deployment
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
 
     // Dependencies
     implementation(libs.retrofit)

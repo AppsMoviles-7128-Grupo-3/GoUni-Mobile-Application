@@ -23,7 +23,7 @@ import com.example.gouni_mobile_application.domain.repository.MapRepository
 import com.example.gouni_mobile_application.data.repository.MapRepositoryImpl
 
 object DataModule {
-    private const val BASE_URL = "http://10.0.2.2:8080/api/" // Change as needed
+    private const val BASE_URL = "https://adaptable-clarity-production.up.railway.app/api/" // Change as needed
     private const val GEOCODING_BASE_URL = "https://maps.googleapis.com/maps/api/"
     private const val DIRECTIONS_BASE_URL = "https://maps.googleapis.com/maps/api/"
 
